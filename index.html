@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>রসায়ন-১ প্রশ্নপত্র</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.maateen.me/solaiman-lipi/font.css" rel="stylesheet">
+    <style>
+    
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --bg-color: #f4f7f6;
+            --paper-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'SolaimanLipi', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            color: var(--primary-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--paper-bg);
+            padding: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 3px double var(--primary-color);
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            color: var(--accent-color);
+        }
+
+        .chapter-title {
+            background: #f0f0f0;
+            padding: 8px 15px;
+            border-left: 5px solid var(--accent-color);
+            margin: 25px 0 15px 0;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .question-list {
+            list-style: none;
+            padding-left: 10px;
+        }
+
+        .question-list li {
+            margin-bottom: 12px;
+            display: flex;
+        }
+
+        .question-list li span {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .exam-info {
+            margin-top: 40px;
+            padding: 20px;
+            border: 2px dashed #ccc;
+            background: #fffdf0;
+        }
+
+        .print-btn-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-print {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            font-family: inherit;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-print:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        /* Print Specific Styles */
+        @media print {
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; width: 100%; border: none; padding: 20px; }
+            .print-btn-container { display: none; }
+            .chapter-title { background: #eee !important; -webkit-print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="print-btn-container">
+        <button class="btn-print" onclick="window.print()">প্রশ্নপত্রটি প্রিন্ট করুন</button>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>রসায়ন - ১</h1>
+        </div>
+
+        <div class="chapter-title">অধ্যায় - ১ম : রসায়নে পদার্থের অবস্থা</div>
+        <ul class="question-list">
+            <li><span>১.</span> মাইক্রো অণু ও ম্যাক্রো অণুর বর্ণনা দাও।</li>
+            <li><span>২.</span> টীকা : (i) প্লাজমা অবস্থা (ii) তরল স্ফটিকাকার অবস্থা (iii) আন্তঃ আণবিক বল (iv) অন্তঃ আণবিক বল</li>
+        </ul>
+
+        <div class="chapter-title">অধ্যায় - ২য় : পরমাণুর গঠন</div>
+        <ul class="question-list">
+            <li><span>১.</span> বোর মডেলের প্রয়োগ ও সীমাবদ্ধতা উল্লেখ কর।</li>
+            <li><span>২.</span> পরমাণুর কেন্দ্রে নিউক্লিয়াসের উপস্থিতি কীভাবে ব্যাখ্যা কর।</li>
+            <li><span>৩.</span> কোয়ান্টাম সংখ্যার তাৎপর্য ব্যাখ্যা কর।</li>
+            <li><span>৪.</span> অরবিট ও অরবিটালের মধ্যে পার্থক্য উল্লেখ কর।</li>
+            <li><span>৫.</span> K (19) এ ১৯তম ইলেকট্রনটি 3d তে না গিয়ে 4s এ যায় কেন?</li>
+            <li><span>৬.</span> হাইজেনবার্গের অনিশ্চয়তা নীতি ব্যাখ্যা কর।</li>
+            <li><span>৭.</span> $\psi$ ও $\psi^2$ এর ভৌত তাৎপর্য ব্যাখ্যা কর। ($\psi$-সাই)</li>
+        </ul>
+
+        <div class="chapter-title">অধ্যায় - ০৩ : তেজস্ক্রিয় রসায়ন</div>
+        <ul class="question-list">
+            <li><span>১.</span> তেজস্ক্রিয়তা একটি নিউক্লীয় প্রক্রিয়া ব্যাখ্যা কর।</li>
+            <li><span>২.</span> অর্ধায়ু ও গড় জীবনের মধ্যে গাণিতিক সম্পর্ক ব্যাখ্যা কর।</li>
+            <li><span>৩.</span> ফিশন ও ফিউশন বিক্রিয়ার মধ্যে তুলনা কর।</li>
+            <li><span>৪.</span> নিউক্লীয় ও রাসায়নিক বিক্রিয়ার মধ্যে পার্থক্য উল্লেখ কর।</li>
+            <li><span>৫.</span> তেজস্ক্রিয় আইসোটোপের প্রয়োগ ব্যাখ্যা কর।</li>
+        </ul>
+
+        <div class="chapter-title">৪র্থ অধ্যায় - পর্যায় সারণি</div>
+        <ul class="question-list">
+            <li><span>১.</span> তড়িৎ ঋণাত্মকতা কী? F সর্বাপেক্ষা তড়িৎ ঋণাত্মক মৌল কেন? ব্যাখ্যা কর।</li>
+            <li><span>২.</span> B অপেক্ষা Be এর আয়নীকরণ শক্তি বেশি হয় কেন?</li>
+            <li><span>৩.</span> Cl অপেক্ষা F এর ইলেকট্রন আসক্তি কম হয় কেন?</li>
+        </ul>
+
+        <div class="chapter-title">৫ম অধ্যায় - রাসায়নিক বন্ধন</div>
+        <ul class="question-list">
+            <li><span>১.</span> CO অণু ডায়াম্যাগনেটিক হলেও NO অণু প্যারাম্যাগনেটিক হয় কেন?</li>
+            <li><span>২.</span> N₂ ও O₂ অণুর চৌম্বক ধর্ম ও বন্ধন ক্রম ব্যাখ্যা কর।</li>
+            <li><span>৩.</span> VSEPR তত্ত্বের স্বীকার্য সমূহ ব্যাখ্যা কর।</li>
+            <li><span>৪.</span> BeCl₂ সরলরৈখিক হলেও SnCl₂ সরলরৈখিক নয় কেন?</li>
+            <li><span>৫.</span> NH₃ ও H₂O এর জ্যামিতিক আকৃতি ব্যাখ্যা কর।</li>
+        </ul>
+
+        <div class="chapter-title">অধ্যায় - ০৬ : রাসায়নিক বিক্রিয়া</div>
+        <ul class="question-list">
+            <li><span>১.</span> নিচের বিক্রিয়াটি সমতাকরণ কর: <br> C₂O₄²⁻ + MnO₄⁻ + H⁺ →</li>
+            <li><span>২.</span> জারণ মান কী? K₂Cr₂O₇ এর কেন্দ্রীয় মৌলের জারণ মান নির্ণয় কর।</li>
+        </ul>
+
+        <div class="exam-info">
+            <strong>পরীক্ষার প্রশ্নের ধরণ:</strong><br>
+            ① ক-বিভাগ - ২টা থেকে ১টা<br>
+            ② খ-বিভাগ - ২টা থেকে ১টা (এই ২টা প্রশ্নের প্রত্যেকটাতে আরও ২টা প্রশ্ন থাকবে)
+        </div>
+    </div>
+
+</body>
+</html>
