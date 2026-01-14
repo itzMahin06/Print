@@ -1,180 +1,245 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>রসায়ন-১ প্রশ্নপত্র</title>
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.maateen.me/solaiman-lipi/font.css" rel="stylesheet">
-    <style>
+    <title>AI Image to Text - Modern UI</title>
     
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    
+    <style>
+        /* --- CSS STYLES --- */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap');
+
+        /* Integration for SolaimanLipi */
+        @font-face {
+            font-family: 'SolaimanLipi';
+            src: url('https://fonts.cdnfonts.com/s/73383/SolaimanLipi.woff') format('woff');
+        }
+
         :root {
-            --primary-color: #2c3e50;
-            --accent-color: #e74c3c;
-            --bg-color: #f4f7f6;
-            --paper-bg: #ffffff;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text-main: #1e293b;
         }
 
         body {
-            font-family: 'SolaimanLipi', sans-serif;
-            background-color: var(--bg-color);
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
             margin: 0;
-            padding: 20px;
-            color: var(--primary-color);
-            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
         }
 
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: var(--paper-bg);
-            padding: 50px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            border-radius: 8px;
-            position: relative;
+            max-width: 900px;
+            width: 100%;
+            background: var(--card);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
         }
 
-        .header {
+        header {
             text-align: center;
-            border-bottom: 3px double var(--primary-color);
-            margin-bottom: 30px;
-            padding-bottom: 10px;
+            margin-bottom: 40px;
         }
 
-        .header h1 {
-            margin: 0;
-            font-size: 2.2rem;
-            color: var(--accent-color);
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #111827;
         }
 
-        .chapter-title {
-            background: #f0f0f0;
-            padding: 8px 15px;
-            border-left: 5px solid var(--accent-color);
-            margin: 25px 0 15px 0;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-
-        .question-list {
-            list-style: none;
-            padding-left: 10px;
-        }
-
-        .question-list li {
-            margin-bottom: 12px;
-            display: flex;
-        }
-
-        .question-list li span {
-            margin-right: 10px;
-            font-weight: bold;
-        }
-
-        .exam-info {
-            margin-top: 40px;
-            padding: 20px;
-            border: 2px dashed #ccc;
-            background: #fffdf0;
-        }
-
-        .print-btn-container {
+        /* Upload Section */
+        .upload-card {
+            border: 2px dashed #cbd5e1;
+            padding: 40px;
+            border-radius: 16px;
             text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .btn-print {
-            background-color: var(--accent-color);
-            color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 50px;
-            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f1f5f9;
             cursor: pointer;
-            transition: transform 0.2s, background 0.2s;
-            font-family: inherit;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
-        .btn-print:hover {
-            background-color: #c0392b;
-            transform: translateY(-2px);
+        .upload-card:hover {
+            border-color: var(--primary);
+            background: #eef2ff;
         }
 
-        /* Print Specific Styles */
+        #imageInput { display: none; }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-generate { background: var(--primary); color: white; }
+        .btn-generate:hover { background: var(--primary-hover); }
+        .btn-generate:disabled { background: #94a3b8; cursor: not-allowed; }
+
+        .btn-secondary { background: #e2e8f0; color: #475569; }
+        .btn-secondary:hover { background: #cbd5e1; }
+
+        /* Loader */
+        #loader {
+            margin-top: 20px;
+            font-weight: 500;
+            color: var(--primary);
+            text-align: center;
+            display: none;
+        }
+
+        /* Result Area */
+        .result-wrapper {
+            margin-top: 40px;
+        }
+
+        #outputArea {
+            width: 100%;
+            min-height: 250px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 25px;
+            background: #fff;
+            font-family: 'SolaimanLipi', sans-serif;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: #334155;
+            white-space: pre-wrap;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .hidden { display: none; }
+
+        /* Print Logic */
         @media print {
-            body { background: white; padding: 0; }
-            .container { box-shadow: none; width: 100%; border: none; padding: 20px; }
-            .print-btn-container { display: none; }
-            .chapter-title { background: #eee !important; -webkit-print-color-adjust: exact; }
+            body * { visibility: hidden; }
+            #outputArea, #outputArea * { 
+                visibility: visible; 
+            }
+            #outputArea {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                border: none;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="print-btn-container">
-        <button class="btn-print" onclick="window.print()">প্রশ্নপত্রটি প্রিন্ট করুন</button>
-    </div>
-
     <div class="container">
-        <div class="header">
-            <h1>রসায়ন - ১</h1>
+        <header>
+            <h1>AI Document Scanner</h1>
+            <p>Extract text from multiple images using AI</p>
+        </header>
+
+        <div class="upload-section">
+            <label for="imageInput" class="upload-card" id="dropZone">
+                <div id="fileStatus">Click to upload or Drag & Drop Images</div>
+                <input type="file" id="imageInput" accept="image/*" multiple>
+            </label>
+            
+            <button id="generateBtn" class="btn-generate">Generate Text</button>
         </div>
 
-        <div class="chapter-title">অধ্যায় - ১ম : রসায়নে পদার্থের অবস্থা</div>
-        <ul class="question-list">
-            <li><span>১.</span> মাইক্রো অণু ও ম্যাক্রো অণুর বর্ণনা দাও।</li>
-            <li><span>২.</span> টীকা : (i) প্লাজমা অবস্থা (ii) তরল স্ফটিকাকার অবস্থা (iii) আন্তঃ আণবিক বল (iv) অন্তঃ আণবিক বল</li>
-        </ul>
+        <div id="loader">Processing AI Model... 0%</div>
 
-        <div class="chapter-title">অধ্যায় - ২য় : পরমাণুর গঠন</div>
-        <ul class="question-list">
-            <li><span>১.</span> বোর মডেলের প্রয়োগ ও সীমাবদ্ধতা উল্লেখ কর।</li>
-            <li><span>২.</span> পরমাণুর কেন্দ্রে নিউক্লিয়াসের উপস্থিতি কীভাবে ব্যাখ্যা কর।</li>
-            <li><span>৩.</span> কোয়ান্টাম সংখ্যার তাৎপর্য ব্যাখ্যা কর।</li>
-            <li><span>৪.</span> অরবিট ও অরবিটালের মধ্যে পার্থক্য উল্লেখ কর।</li>
-            <li><span>৫.</span> K (19) এ ১৯তম ইলেকট্রনটি 3d তে না গিয়ে 4s এ যায় কেন?</li>
-            <li><span>৬.</span> হাইজেনবার্গের অনিশ্চয়তা নীতি ব্যাখ্যা কর।</li>
-            <li><span>৭.</span> $\psi$ ও $\psi^2$ এর ভৌত তাৎপর্য ব্যাখ্যা কর। ($\psi$-সাই)</li>
-        </ul>
-
-        <div class="chapter-title">অধ্যায় - ০৩ : তেজস্ক্রিয় রসায়ন</div>
-        <ul class="question-list">
-            <li><span>১.</span> তেজস্ক্রিয়তা একটি নিউক্লীয় প্রক্রিয়া ব্যাখ্যা কর।</li>
-            <li><span>২.</span> অর্ধায়ু ও গড় জীবনের মধ্যে গাণিতিক সম্পর্ক ব্যাখ্যা কর।</li>
-            <li><span>৩.</span> ফিশন ও ফিউশন বিক্রিয়ার মধ্যে তুলনা কর।</li>
-            <li><span>৪.</span> নিউক্লীয় ও রাসায়নিক বিক্রিয়ার মধ্যে পার্থক্য উল্লেখ কর।</li>
-            <li><span>৫.</span> তেজস্ক্রিয় আইসোটোপের প্রয়োগ ব্যাখ্যা কর।</li>
-        </ul>
-
-        <div class="chapter-title">৪র্থ অধ্যায় - পর্যায় সারণি</div>
-        <ul class="question-list">
-            <li><span>১.</span> তড়িৎ ঋণাত্মকতা কী? F সর্বাপেক্ষা তড়িৎ ঋণাত্মক মৌল কেন? ব্যাখ্যা কর।</li>
-            <li><span>২.</span> B অপেক্ষা Be এর আয়নীকরণ শক্তি বেশি হয় কেন?</li>
-            <li><span>৩.</span> Cl অপেক্ষা F এর ইলেকট্রন আসক্তি কম হয় কেন?</li>
-        </ul>
-
-        <div class="chapter-title">৫ম অধ্যায় - রাসায়নিক বন্ধন</div>
-        <ul class="question-list">
-            <li><span>১.</span> CO অণু ডায়াম্যাগনেটিক হলেও NO অণু প্যারাম্যাগনেটিক হয় কেন?</li>
-            <li><span>২.</span> N₂ ও O₂ অণুর চৌম্বক ধর্ম ও বন্ধন ক্রম ব্যাখ্যা কর।</li>
-            <li><span>৩.</span> VSEPR তত্ত্বের স্বীকার্য সমূহ ব্যাখ্যা কর।</li>
-            <li><span>৪.</span> BeCl₂ সরলরৈখিক হলেও SnCl₂ সরলরৈখিক নয় কেন?</li>
-            <li><span>৫.</span> NH₃ ও H₂O এর জ্যামিতিক আকৃতি ব্যাখ্যা কর।</li>
-        </ul>
-
-        <div class="chapter-title">অধ্যায় - ০৬ : রাসায়নিক বিক্রিয়া</div>
-        <ul class="question-list">
-            <li><span>১.</span> নিচের বিক্রিয়াটি সমতাকরণ কর: <br> C₂O₄²⁻ + MnO₄⁻ + H⁺ →</li>
-            <li><span>২.</span> জারণ মান কী? K₂Cr₂O₇ এর কেন্দ্রীয় মৌলের জারণ মান নির্ণয় কর।</li>
-        </ul>
-
-        <div class="exam-info">
-            <strong>পরীক্ষার প্রশ্নের ধরণ:</strong><br>
-            ① ক-বিভাগ - ২টা থেকে ১টা<br>
-            ② খ-বিভাগ - ২টা থেকে ১টা (এই ২টা প্রশ্নের প্রত্যেকটাতে আরও ২টা প্রশ্ন থাকবে)
+        <div class="result-wrapper">
+            <div id="outputArea" contenteditable="true" placeholder="Extracted text will appear here..."></div>
+            
+            <div class="btn-group">
+                <button id="copyBtn" class="btn-secondary hidden">Copy Text</button>
+                <button id="printBtn" class="btn-secondary hidden">Print Document</button>
+            </div>
         </div>
     </div>
 
+    <script>
+        /* --- JAVASCRIPT LOGIC --- */
+        const imageInput = document.getElementById('imageInput');
+        const generateBtn = document.getElementById('generateBtn');
+        const outputArea = document.getElementById('outputArea');
+        const loader = document.getElementById('loader');
+        const printBtn = document.getElementById('printBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const fileStatus = document.getElementById('fileStatus');
+
+        // Update UI when files are selected
+        imageInput.addEventListener('change', () => {
+            const count = imageInput.files.length;
+            fileStatus.innerText = count > 0 ? `${count} images selected` : "Click to upload or Drag & Drop Images";
+        });
+
+        generateBtn.addEventListener('click', async () => {
+            const files = imageInput.files;
+            if (files.length === 0) {
+                alert("Please select images first.");
+                return;
+            }
+
+            // Reset UI
+            outputArea.innerText = "";
+            loader.style.display = "block";
+            generateBtn.disabled = true;
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                loader.innerText = `Processing image ${i + 1} of ${files.length}...`;
+                
+                const imageUrl = URL.createObjectURL(file);
+                
+                try {
+                    // Tesseract AI Engine
+                    // 'eng+ben' supports English and Bengali
+                    const { data: { text } } = await Tesseract.recognize(
+                        imageUrl, 
+                        'eng+ben',
+                        { logger: m => console.log(m) }
+                    );
+                    
+                    outputArea.innerText += text + "\n\n--- Page Break ---\n\n";
+                } catch (error) {
+                    console.error("AI Error:", error);
+                    outputArea.innerText += `[Error processing image ${i+1}]\n`;
+                }
+            }
+
+            loader.style.display = "none";
+            generateBtn.disabled = false;
+            printBtn.classList.remove('hidden');
+            copyBtn.classList.remove('hidden');
+        });
+
+        // Print functionality
+        printBtn.addEventListener('click', () => {
+            window.print();
+        });
+
+        // Copy functionality
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(outputArea.innerText);
+            alert("Text copied to clipboard!");
+        });
+    </script>
 </body>
 </html>
