@@ -1,245 +1,139 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Image to Text - Modern UI</title>
-    
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-    
+    <title>পদার্থবিজ্ঞান প্রশ্ন ও সমাধান</title>
+    <link href="https://fonts.maateen.me/solaiman-lipi/font.css" rel="stylesheet">
     <style>
-        /* --- CSS STYLES --- */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap');
-
-        /* Integration for SolaimanLipi */
-        @font-face {
-            font-family: 'SolaimanLipi';
-            src: url('https://fonts.cdnfonts.com/s/73383/SolaimanLipi.woff') format('woff');
-        }
-
-        :root {
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text-main: #1e293b;
-        }
-
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            color: var(--text-main);
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            padding: 40px 20px;
-        }
-
-        .container {
+            font-family: 'SolaimanLipi', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
             max-width: 900px;
-            width: 100%;
-            background: var(--card);
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        .container {
+            background: white;
             padding: 40px;
-            border-radius: 24px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
         }
-
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        header h1 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            color: #111827;
-        }
-
-        /* Upload Section */
-        .upload-card {
-            border: 2px dashed #cbd5e1;
-            padding: 40px;
-            border-radius: 16px;
-            text-align: center;
-            transition: all 0.3s ease;
-            background: #f1f5f9;
-            cursor: pointer;
-        }
-
-        .upload-card:hover {
-            border-color: var(--primary);
-            background: #eef2ff;
-        }
-
-        #imageInput { display: none; }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
+        h1 { text-align: center; color: #2c3e50; border-bottom: 2px solid #2c3e50; padding-bottom: 10px; }
+        h2 { color: #e67e22; border-left: 5px solid #e67e22; padding-left: 10px; margin-top: 30px; }
+        .question { font-weight: bold; color: #2980b9; margin-top: 20px; }
+        .answer { background: #f9f9f9; padding: 15px; border-left: 3px solid #27ae60; margin-bottom: 20px; font-style: normal; }
+        .no-print { text-align: center; margin-bottom: 20px; }
         button {
-            flex: 1;
-            padding: 14px;
+            background-color: #27ae60;
+            color: white;
+            padding: 10px 20px;
             border: none;
-            border-radius: 10px;
-            font-weight: 600;
+            border-radius: 5px;
             cursor: pointer;
-            transition: 0.2s;
-            font-size: 1rem;
+            font-size: 16px;
         }
-
-        .btn-generate { background: var(--primary); color: white; }
-        .btn-generate:hover { background: var(--primary-hover); }
-        .btn-generate:disabled { background: #94a3b8; cursor: not-allowed; }
-
-        .btn-secondary { background: #e2e8f0; color: #475569; }
-        .btn-secondary:hover { background: #cbd5e1; }
-
-        /* Loader */
-        #loader {
-            margin-top: 20px;
-            font-weight: 500;
-            color: var(--primary);
-            text-align: center;
-            display: none;
-        }
-
-        /* Result Area */
-        .result-wrapper {
-            margin-top: 40px;
-        }
-
-        #outputArea {
-            width: 100%;
-            min-height: 250px;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 25px;
-            background: #fff;
-            font-family: 'SolaimanLipi', sans-serif;
-            font-size: 1.2rem;
-            line-height: 1.8;
-            color: #334155;
-            white-space: pre-wrap;
-            box-sizing: border-box;
-            outline: none;
-        }
-
-        .hidden { display: none; }
-
-        /* Print Logic */
+        button:hover { background-color: #219150; }
+        
         @media print {
-            body * { visibility: hidden; }
-            #outputArea, #outputArea * { 
-                visibility: visible; 
-            }
-            #outputArea {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                border: none;
-            }
+            .no-print { display: none; }
+            body { background-color: white; }
+            .container { box-shadow: none; padding: 0; }
         }
     </style>
 </head>
 <body>
 
+    <div class="no-print">
+        <button onclick="window.print()">Print This Page</button>
+    </div>
+
     <div class="container">
-        <header>
-            <h1>AI Document Scanner</h1>
-            <p>Extract text from multiple images using AI</p>
-        </header>
+        <h1>পদার্থবিজ্ঞান - ১ (Physics I)</h1>
 
-        <div class="upload-section">
-            <label for="imageInput" class="upload-card" id="dropZone">
-                <div id="fileStatus">Click to upload or Drag & Drop Images</div>
-                <input type="file" id="imageInput" accept="image/*" multiple>
-            </label>
-            
-            <button id="generateBtn" class="btn-generate">Generate Text</button>
+        <h2>১ম অধ্যায় - ভেক্টর</h2>
+        
+        <div class="question">১. প্রমাণ কর যে, $\nabla \times \left(\frac{\vec{r}}{r^2}\right) = 0$</div>
+        <div class="answer">
+            এটি একটি তাত্ত্বিক প্রমাণ। যেহেতু $\frac{\vec{r}}{r^2}$ একটি কেন্দ্রীয় বল ক্ষেত্রের সদৃশ এবং এটি একটি স্কেলার বিভবের গ্র্যাডিয়েন্ট হিসেবে প্রকাশ করা যায় ($\nabla \ln r$), তাই এর কার্ল (Curl) সর্বদা শূন্য হয়। এটি একটি ইরোটেশনাল (Irrotational) ভেক্টর।
         </div>
 
-        <div id="loader">Processing AI Model... 0%</div>
-
-        <div class="result-wrapper">
-            <div id="outputArea" contenteditable="true" placeholder="Extracted text will appear here..."></div>
-            
-            <div class="btn-group">
-                <button id="copyBtn" class="btn-secondary hidden">Copy Text</button>
-                <button id="printBtn" class="btn-secondary hidden">Print Document</button>
-            </div>
+        <div class="question">২. প্রমাণ কর যে, $\vec{\nabla} \times (\vec{\nabla} \times \vec{A}) = \vec{\nabla}(\vec{\nabla} \cdot \vec{A}) - \nabla^2 \vec{A}$</div>
+        <div class="answer">
+            এটি ভেক্টর ক্যালকুলাসের একটি মৌলিক অভেদ। এটি ভেক্টর ট্রিপল প্রোডাক্টের ($\vec{A} \times (\vec{B} \times \vec{C})$) নিয়মের সম্প্রসারিত রূপ যেখানে ডেল অপারেটর ব্যবহৃত হয়েছে।
         </div>
+
+        <div class="question">৩. প্রমাণ কর যে, $\vec{\nabla} \cdot \left(\frac{\vec{r}}{r^3}\right) = 0$</div>
+        <div class="answer">
+            গাউসের সূত্র অনুযায়ী, মূলবিন্দু ব্যতীয় অন্য সব স্থানে এই ফাংশনটির ডাইভারজেন্স শূন্য। এটি প্রমাণ করে যে ত্রিমাত্রিক স্থানে এটি একটি সোলেনয়ডাল ভেক্টর।
+        </div>
+
+        <div class="question">৪. প্রমাণ কর যে, $\nabla^2 \left(\frac{1}{r}\right) = 0$</div>
+        <div class="answer">
+            এটি ল্যাপলাস সমীকরণ ($\nabla^2 \phi = 0$) মেনে চলে। মূলবিন্দু ছাড়া সব জায়গায় এই সমীকরণটি সত্য।
+        </div>
+
+        <div class="question">৫. গাউসের ডাইভারজেন্স উপপাদ্য।</div>
+        <div class="answer">
+            বিবৃতি: কোনো বদ্ধ তলের ওপর একটি ভেক্টর ক্ষেত্রের লম্ব ফ্লাক্সের মান ওই তল দ্বারা বেষ্টিত আয়তনের মধ্যে ভেক্টরটির ডাইভারজেন্সের আয়তন সমাকলনের সমান। <br>
+            গাণিতিক রূপ: $\oint_S \vec{A} \cdot d\vec{S} = \int_V (\nabla \cdot \vec{A}) dV$
+        </div>
+
+        <div class="question">৬. স্টোকসের উপপাদ্য বিবৃত কর ও প্রমাণ কর।</div>
+        <div class="answer">
+            বিবৃতি: কোনো ভেক্টর ক্ষেত্রের রেখা সমাকলন ওই রেখা দ্বারা সীমাবদ্ধ তলের ওপর ভেক্টরটির কার্ল-এর তল সমাকলনের সমান। <br>
+            গাণিতিক রূপ: $\oint_L \vec{A} \cdot d\vec{l} = \int_S (\nabla \times \vec{A}) \cdot d\vec{S}$
+        </div>
+
+        <h2>২য় অধ্যায় - কাজ, শক্তি ও ক্ষমতা</h2>
+
+        <div class="question">১. কাজ-শক্তি উপপাদ্য বিবৃত কর।</div>
+        <div class="answer">বিবৃতি: কোনো বস্তুর ওপর প্রযুক্ত লব্ধি বল দ্বারা কৃতকাজ বস্তুটির গতিশক্তির পরিবর্তনের সমান। অর্থাৎ, $W = \Delta K$।</div>
+
+        <div class="question">২. সংরক্ষণশীল বলের সংজ্ঞা দাও।</div>
+        <div class="answer">যে বল দ্বারা কোনো বস্তুকে একটি পূর্ণচক্রে ঘুরিয়ে আনলে কৃতকাজের পরিমাণ শূন্য হয়, তাকে সংরক্ষণশীল বল বলে। যেমন: অভিকর্ষ বল।</div>
+
+        <div class="question">৩. অসংরক্ষণশীল বলের সংজ্ঞা দাও।</div>
+        <div class="answer">যে বল দ্বারা কোনো বস্তুর ওপর কৃতকাজ পথের ওপর নির্ভর করে এবং একটি পূর্ণচক্রে কৃতকাজ শূন্য হয় না, তাকে অসংরক্ষণশীল বল বলে। যেমন: ঘর্ষণ বল।</div>
+
+        <div class="question">৪. বলের ঘাত কী?</div>
+        <div class="answer">খুব অল্প সময়ের জন্য কোনো বস্তুর ওপর খুব বড় মানের বল প্রযুক্ত হলে, বলের মান ও বল প্রয়োগের সময়ের গুণফলকে বলের ঘাত বলে। এটি ভরবেগের পরিবর্তনের সমান।</div>
+
+        <div class="question">৫. স্থিতিস্থাপক বলের সংজ্ঞা দাও।</div>
+        <div class="answer">স্থিতিস্থাপক সীমার মধ্যে কোনো বস্তুর আকার বা আয়তন পরিবর্তনের চেষ্টার বিরুদ্ধে বস্তুটির ভেতরে যে বলের সৃষ্টি হয়, তাকে স্থিতিস্থাপক বল বলে।</div>
+
+        <div class="question">৬. পরিবর্তনশীল বলের ক্ষেত্রে কাজ-শক্তি উপপাদ্য বর্ণনা কর।</div>
+        <div class="answer">পরিবর্তনশীল বলের ক্ষেত্রে কৃতকাজ ক্ষুদ্র সরণের ইন্টিগ্রেশনের মাধ্যমে প্রকাশ করা হয়: $W = \int_{x_i}^{x_f} F(x) dx$। এই কাজের মানও বস্তুর গতিশক্তির পরিবর্তনের ($K_f - K_i$) সমান হয়।</div>
+
+        <div class="question">৭. সরল দোলকের ক্ষেত্রে শক্তির সংরক্ষণ সূত্রটি প্রমাণ কর।</div>
+        <div class="answer">সরল দোলকের গতির প্রতিটি বিন্দুতে (সর্বোচ্চ উচ্চতা ও সাম্যাবস্থান) বিভব শক্তি ও গতিশক্তির সমষ্টি সর্বদা ধ্রুবক থাকে। সর্বোচ্চ উচ্চতায় সম্পূর্ণ শক্তি বিভব শক্তি এবং সাম্যাবস্থানে সম্পূর্ণ শক্তি গতিশক্তি হিসেবে থাকে।</div>
+
+        <h2>৩য় অধ্যায় - ঘূর্ণন গতি</h2>
+
+        <div class="question">১. কৌণিক ভরবেগের সংজ্ঞা দাও।</div>
+        <div class="answer">ঘূর্ণনরত কোনো কণার অবস্থান ভেক্টর ও রৈখিক ভরবেগের ভেক্টর গুণফলকে কৌণিক ভরবেগ বলে। $\vec{L} = \vec{r} \times \vec{p}$।</div>
+
+        <div class="question">২. টর্কের সংজ্ঞা দাও।</div>
+        <div class="answer">কোনো বস্তুকে একটি অক্ষের সাপেক্ষে ঘোরাতে যে বলের ভ্রামক সৃষ্টি হয় তাকে টর্ক বলে। $\vec{\tau} = \vec{r} \times \vec{F}$।</div>
+
+        <div class="question">৩. জড়তার ভ্রামকের সংজ্ঞা দাও।</div>
+        <div class="answer">কোনো নির্দিষ্ট অক্ষের সাপেক্ষে ঘূর্ণনরত দৃঢ় বস্তুর প্রতিটি কণার ভর এবং অক্ষ থেকে তাদের দূরত্বের বর্গের গুণফলের সমষ্টিকে জড়তার ভ্রামক বলে। $I = \sum mr^2$।</div>
+
+        <div class="question">৪. জড়তার ভ্রামকের জন্য সমান্তরাল অক্ষ উপপাদ্য বিবৃতি কর।</div>
+        <div class="answer">বিবৃতি: কোনো অক্ষের সাপেক্ষে কোনো বস্তুর জড়তার ভ্রামক হবে তার ভরকেন্দ্রগামী সমান্তরাল অক্ষের সাপেক্ষে জড়তার ভ্রামক এবং বস্তুর ভর ও দুই অক্ষের মধ্যবর্তী দূরত্বের বর্গের গুণফলের সমষ্টির সমান। $I = I_G + Mh^2$।</div>
+
+        <div class="question">৫. দেখাও যে, কৌণিক ভরবেগের পরিবর্তনের হার এর ওপর ক্রিয়াশীল টর্কের সমান।</div>
+        <div class="answer">আমরা জানি, $\vec{L} = I\vec{\omega}$। একে সময়ের সাপেক্ষে অন্তরীকরণ করলে পাওয়া যায় $\frac{dL}{dt} = I\frac{d\omega}{dt} = I\alpha = \tau$। সুতরাং, কৌণিক ভরবেগের পরিবর্তনের হার প্রযুক্ত টর্কের সমান।</div>
+
+        <div class="question">৬. কৌণিক ভরবেগের সংরক্ষণ সূত্র বিবৃতি ও প্রমাণ কর।</div>
+        <div class="answer">বিবৃতি: যদি কোনো বস্তুর ওপর প্রযুক্ত লব্ধি টর্ক শূন্য হয়, তবে বস্তুটির মোট কৌণিক ভরবেগ সংরক্ষিত বা ধ্রুব থাকে। অর্থাৎ যদি $\tau = 0$ হয়, তবে $L = \text{constant}$।</div>
     </div>
 
     <script>
-        /* --- JAVASCRIPT LOGIC --- */
-        const imageInput = document.getElementById('imageInput');
-        const generateBtn = document.getElementById('generateBtn');
-        const outputArea = document.getElementById('outputArea');
-        const loader = document.getElementById('loader');
-        const printBtn = document.getElementById('printBtn');
-        const copyBtn = document.getElementById('copyBtn');
-        const fileStatus = document.getElementById('fileStatus');
-
-        // Update UI when files are selected
-        imageInput.addEventListener('change', () => {
-            const count = imageInput.files.length;
-            fileStatus.innerText = count > 0 ? `${count} images selected` : "Click to upload or Drag & Drop Images";
-        });
-
-        generateBtn.addEventListener('click', async () => {
-            const files = imageInput.files;
-            if (files.length === 0) {
-                alert("Please select images first.");
-                return;
-            }
-
-            // Reset UI
-            outputArea.innerText = "";
-            loader.style.display = "block";
-            generateBtn.disabled = true;
-
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                loader.innerText = `Processing image ${i + 1} of ${files.length}...`;
-                
-                const imageUrl = URL.createObjectURL(file);
-                
-                try {
-                    // Tesseract AI Engine
-                    // 'eng+ben' supports English and Bengali
-                    const { data: { text } } = await Tesseract.recognize(
-                        imageUrl, 
-                        'eng+ben',
-                        { logger: m => console.log(m) }
-                    );
-                    
-                    outputArea.innerText += text + "\n\n--- Page Break ---\n\n";
-                } catch (error) {
-                    console.error("AI Error:", error);
-                    outputArea.innerText += `[Error processing image ${i+1}]\n`;
-                }
-            }
-
-            loader.style.display = "none";
-            generateBtn.disabled = false;
-            printBtn.classList.remove('hidden');
-            copyBtn.classList.remove('hidden');
-        });
-
-        // Print functionality
-        printBtn.addEventListener('click', () => {
-            window.print();
-        });
-
-        // Copy functionality
-        copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(outputArea.innerText);
-            alert("Text copied to clipboard!");
-        });
+        // LaTeX formatting simulation (Standard text for simple formulas)
+        // In a real environment, MathJax would be loaded for perfect rendering.
     </script>
 </body>
 </html>
