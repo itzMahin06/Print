@@ -3,157 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>পদার্থবিজ্ঞান প্রশ্ন ও সমাধান</title>
+    <title>Google Sheet Printer & Exporter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <link href="https://fonts.maateen.me/solaiman-lipi/font.css" rel="stylesheet">
-    <script>
-        window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$'], ['\\[', '\\]']],
-                processEscapes: true
-            },
-            svg: { fontCache: 'global' }
-        };
-    </script>
-    <script type="text/javascript" id="MathJax-script" async
-        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-    </script>
+
     <style>
-        body {
-            font-family: 'SolaimanLipi', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f4f4f9;
-        }
-        .container {
-            background: white;
-            padding: 40px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            border-radius: 8px;
-        }
-        h1 { text-align: center; color: #2c3e50; border-bottom: 2px solid #2c3e50; padding-bottom: 10px; }
-        h2 { color: #e67e22; border-left: 5px solid #e67e22; padding-left: 10px; margin-top: 30px; }
-        .question { font-weight: bold; color: #2980b9; margin-top: 20px; }
-        .answer { background: #f9f9f9; padding: 15px; border-left: 3px solid #27ae60; margin-bottom: 20px; font-style: normal; }
-        .no-print { text-align: center; margin-bottom: 20px; }
-        button {
-            background-color: #27ae60;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover { background-color: #219150; }
+        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'SolaimanLipi', sans-serif; }
         
+        /* Print Styles */
         @media print {
-            .no-print { display: none; }
-            body { background-color: white; }
-            .container { box-shadow: none; padding: 0; }
+            body * { visibility: hidden; }
+            #printable-area, #printable-area * { visibility: visible; }
+            #printable-area { position: absolute; left: 0; top: 0; width: 100%; }
+            .no-print { display: none !important; }
         }
+
+        /* Custom Scrollbar for Table */
+        .table-container::-webkit-scrollbar { height: 8px; width: 8px; }
+        .table-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        .table-container::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
+        .table-container::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
     </style>
 </head>
-<body>
+<body class="bg-gray-50 min-h-screen text-gray-800">
 
-    <div class="no-print">
-        <button onclick="window.print()">Print This Page</button>
+    <div class="max-w-6xl mx-auto p-4 py-10">
+        <div class="text-center mb-10 no-print">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-600 mb-2">
+                <i class="fa-solid fa-file-excel mr-2"></i>Smart Sheet Exporter
+            </h1>
+            <p class="text-gray-500">যেকোনো পাবলিক গুগল শিট প্রিন্ট করুন অথবা ছবি আকারে (Zip) সেভ করুন</p>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8 no-print">
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-grow">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">গুগল শিটের পাবলিক লিংক দিন</label>
+                    <input type="text" id="sheetUrl" placeholder="https://docs.google.com/spreadsheets/d/..../edit" 
+                        class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none">
+                </div>
+                <div class="flex items-end">
+                    <button onclick="loadSheet()" id="loadBtn" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-down"></i> শিট লোড করুন
+                    </button>
+                </div>
+            </div>
+            <p class="text-xs text-red-500 mt-2 hidden" id="errorMsg"><i class="fa-solid fa-circle-exclamation"></i> সঠিক লিংক দিন অথবা শিটটি 'Public' করা আছে কিনা নিশ্চিত করুন।</p>
+        </div>
+
+        <div id="actionButtons" class="hidden flex flex-wrap justify-end gap-3 mb-4 no-print">
+            <button onclick="window.print()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2.5 rounded-lg font-medium shadow-sm transition-all flex items-center gap-2">
+                <i class="fa-solid fa-print"></i> সরাসরি প্রিন্ট করুন
+            </button>
+            <button onclick="saveAsZip()" id="zipBtn" class="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2.5 rounded-lg font-medium shadow-sm transition-all flex items-center gap-2">
+                <i class="fa-solid fa-file-zipper"></i> ছবি হিসেবে সেভ করুন (Zip)
+            </button>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hidden" id="previewContainer">
+            <div class="p-4 bg-gray-50 border-b border-gray-100 flex justify-between items-center no-print">
+                <h3 class="font-semibold text-gray-700"><i class="fa-solid fa-table list-alt mr-2"></i>শিট প্রিভিউ</h3>
+                <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded font-medium" id="rowCount">0 Rows</span>
+            </div>
+            <div id="printable-area" class="p-6 overflow-x-auto table-container">
+                </div>
+        </div>
+
+        <div id="hidden-render-area" class="absolute left-[-9999px] top-0 bg-white p-8 w-[1000px]"></div>
     </div>
 
-    <div class="container">
-        <h1>পদার্থবিজ্ঞান - ১ (Physics I)</h1>
-
-        <h2>১ম অধ্যায় - ভেক্টর</h2>
-        
-        <div class="question">১. প্রমাণ কর যে, $\nabla \times \left(\frac{\vec{r}}{r^2}\right) = 0$</div>
-        <div class="answer">
-            এটি একটি তাত্ত্বিক প্রমাণ। যেহেতু $\frac{\vec{r}}{r^2}$ একটি কেন্দ্রীয় বল ক্ষেত্রের সদৃশ এবং এটি একটি স্কেলার বিভবের গ্র্যাডিয়েন্ট হিসেবে প্রকাশ করা যায় ($\nabla \ln r$), তাই এর কার্ল (Curl) সর্বদা শূন্য হয়। এটি একটি ইরোটেশনাল (Irrotational) ভেক্টর।
-        </div>
-
-        <div class="question">২. প্রমাণ কর যে, $\vec{\nabla} \times (\vec{\nabla} \times \vec{A}) = \vec{\nabla}(\vec{\nabla} \cdot \vec{A}) - \nabla^2 \vec{A}$</div>
-        <div class="answer">
-            এটি ভেক্টর ক্যালকুলাসের একটি মৌলিক অভেদ। এটি ভেক্টর ট্রিপল প্রোডাক্টের ($\vec{A} \times (\vec{B} \times \vec{C})$) নিয়মের সম্প্রসারিত রূপ যেখানে ডেল অপারেটর ব্যবহৃত হয়েছে।
-        </div>
-
-        <div class="question">৩. প্রমাণ কর যে, $\vec{\nabla} \cdot \left(\frac{\vec{r}}{r^3}\right) = 0$</div>
-        <div class="answer">
-            গাউসের সূত্র অনুযায়ী, মূলবিন্দু ব্যতীয় অন্য সব স্থানে এই ফাংশনটির ডাইভারজেন্স শূন্য। এটি প্রমাণ করে যে ত্রিমাত্রিক স্থানে এটি একটি সোলেনয়ডাল ভেক্টর।
-        </div>
-
-        <div class="question">৪. প্রমাণ কর যে, $\nabla^2 \left(\frac{1}{r}\right) = 0$</div>
-        <div class="answer">
-            এটি ল্যাপলাস সমীকরণ ($\nabla^2 \phi = 0$) মেনে চলে। মূলবিন্দু ছাড়া সব জায়গায় এই সমীকরণটি সত্য।
-        </div>
-
-        <div class="question">৫. গাউসের ডাইভারজেন্স উপপাদ্য।</div>
-        <div class="answer">
-            বিবৃতি: কোনো বদ্ধ তলের ওপর একটি ভেক্টর ক্ষেত্রের লম্ব ফ্লাক্সের মান ওই তল দ্বারা বেষ্টিত আয়তনের মধ্যে ভেক্টরটির ডাইভারজেন্সের আয়তন সমাকলনের সমান। <br>
-            গাণিতিক রূপ: $\oint_S \vec{A} \cdot d\vec{S} = \int_V (\nabla \cdot \vec{A}) dV$
-        </div>
-
-        <div class="question">৬. স্টোকসের উপপাদ্য বিবৃত কর ও প্রমাণ কর।</div>
-        <div class="answer">
-            বিবৃতি: কোনো ভেক্টর ক্ষেত্রের রেখা সমাকলন ওই রেখা দ্বারা সীমাবদ্ধ তলের ওপর ভেক্টরটির কার্ল-এর তল সমাকলনের সমান। <br>
-            গাণিতিক রূপ: $\oint_L \vec{A} \cdot d\vec{l} = \int_S (\nabla \times \vec{A}) \cdot d\vec{S}$
-        </div>
-
-        <h2>২য় অধ্যায় - কাজ, শক্তি ও ক্ষমতা</h2>
-
-        <div class="question">১. কাজ-শক্তি উপপাদ্য বিবৃত কর।</div>
-        <div class="answer">বিবৃতি: কোনো বস্তুর ওপর প্রযুক্ত লব্ধি বল দ্বারা কৃতকাজ বস্তুটির গতিশক্তির পরিবর্তনের সমান। অর্থাৎ, $W = \Delta K$।</div>
-
-        <div class="question">২. সংরক্ষণশীল বলের সংজ্ঞা দাও।</div>
-        <div class="answer">যে বল দ্বারা কোনো বস্তুকে একটি পূর্ণচক্রে ঘুরিয়ে আনলে কৃতকাজের পরিমাণ শূন্য হয়, তাকে সংরক্ষণশীল বল বলে। যেমন: অভিকর্ষ বল।</div>
-
-        <div class="question">৩. অসংরক্ষণশীল বলের সংজ্ঞা দাও।</div>
-        <div class="answer">যে বল দ্বারা কোনো বস্তুর ওপর কৃতকাজ পথের ওপর নির্ভর করে এবং একটি পূর্ণচক্রে কৃতকাজ শূন্য হয় না, তাকে অসংরক্ষণশীল বল বলে। যেমন: ঘর্ষণ বল।</div>
-
-        <div class="question">৪. বলের ঘাত কী?</div>
-        <div class="answer">খুব অল্প সময়ের জন্য কোনো বস্তুর ওপর খুব বড় মানের বল প্রযুক্ত হলে, বলের মান ও বল প্রয়োগের সময়ের গুণফলকে বলের ঘাত বলে। এটি ভরবেগের পরিবর্তনের সমান।</div>
-
-        <div class="question">৫. স্থিতিস্থাপক বলের সংজ্ঞা দাও।</div>
-        <div class="answer">স্থিতিস্থাপক সীমার মধ্যে কোনো বস্তুর আকার বা আয়তন পরিবর্তনের চেষ্টার বিরুদ্ধে বস্তুটির ভেতরে যে বলের সৃষ্টি হয়, তাকে স্থিতিস্থাপক বল বলে।</div>
-
-        <div class="question">৬. পরিবর্তনশীল বলের ক্ষেত্রে কাজ-শক্তি উপপাদ্য বর্ণনা কর।</div>
-        <div class="answer">পরিবর্তনশীল বলের ক্ষেত্রে কৃতকাজ ক্ষুদ্র সরণের ইন্টিগ্রেশনের মাধ্যমে প্রকাশ করা হয়: $W = \int_{x_i}^{x_f} F(x) dx$। এই কাজের মানও বস্তুর গতিশক্তির পরিবর্তনের ($K_f - K_i$) সমান হয়।</div>
-
-        <div class="question">৭. সরল দোলকের ক্ষেত্রে শক্তির সংরক্ষণ সূত্রটি প্রমাণ কর।</div>
-        <div class="answer">সরল দোলকের গতির প্রতিটি বিন্দুতে (সর্বোচ্চ উচ্চতা ও সাম্যাবস্থান) বিভব শক্তি ও গতিশক্তির সমষ্টি সর্বদা ধ্রুবক থাকে। সর্বোচ্চ উচ্চতায় সম্পূর্ণ শক্তি বিভব শক্তি এবং সাম্যাবস্থানে সম্পূর্ণ শক্তি গতিশক্তি হিসেবে থাকে।</div>
-
-        <h2>৩য় অধ্যায় - ঘূর্ণন গতি</h2>
-
-        <div class="question">১. কৌণিক ভরবেগের সংজ্ঞা দাও।</div>
-        <div class="answer">ঘূর্ণনরত কোনো কণার অবস্থান ভেক্টর ও রৈখিক ভরবেগের ভেক্টর গুণফলকে কৌণিক ভরবেগ বলে। $\vec{L} = \vec{r} \times \vec{p}$।</div>
-
-        <div class="question">২. টর্কের সংজ্ঞা দাও।</div>
-        <div class="answer">কোনো বস্তুকে একটি অক্ষের সাপেক্ষে ঘোরাতে যে বলের ভ্রামক সৃষ্টি হয় তাকে টর্ক বলে। $\vec{\tau} = \vec{r} \times \vec{F}$।</div>
-
-        <div class="question">৩. জড়তার ভ্রামকের সংজ্ঞা দাও।</div>
-        <div class="answer">কোনো নির্দিষ্ট অক্ষের সাপেক্ষে ঘূর্ণনরত দৃঢ় বস্তুর প্রতিটি কণার ভর এবং অক্ষ থেকে তাদের দূরত্বের বর্গের গুণফলের সমষ্টিকে জড়তার ভ্রামক বলে। $I = \sum mr^2$।</div>
-
-        <div class="question">৪. জড়তার ভ্রামকের জন্য সমান্তরাল অক্ষ উপপাদ্য বিবৃতি কর।</div>
-        <div class="answer">বিবৃতি: কোনো অক্ষের সাপেক্ষে কোনো বস্তুর জড়তার ভ্রামক হবে তার ভরকেন্দ্রগামী সমান্তরাল অক্ষের সাপেক্ষে জড়তার ভ্রামক এবং বস্তুর ভর ও দুই অক্ষের মধ্যবর্তী দূরত্বের বর্গের গুণফলের সমষ্টির সমান। $I = I_G + Mh^2$।</div>
-
-        <div class="question">৫. দেখাও যে, কৌণিক ভরবেগের পরিবর্তনের হার এর ওপর ক্রিয়াশীল টর্কের সমান।</div>
-        <div class="answer">আমরা জানি, $\vec{L} = I\vec{\omega}$। একে সময়ের সাপেক্ষে অন্তরীকরণ করলে পাওয়া যায় $\frac{dL}{dt} = I\frac{d\omega}{dt} = I\alpha = \tau$। সুতরাং, কৌণিক ভরবেগের পরিবর্তনের হার প্রযুক্ত টর্কের সমান।</div>
-
-        <div class="question">৬. কৌণিক ভরবেগের সংরক্ষণ সূত্র বিবৃতি ও প্রমাণ কর।</div>
-        <div class="answer">বিবৃতি: যদি কোনো বস্তুর ওপর প্রযুক্ত লব্ধি টর্ক শূন্য হয়, তবে বস্তুটির মোট কৌণিক ভরবেগ সংরক্ষিত বা ধ্রুব থাকে। অর্থাৎ যদি $\tau = 0$ হয়, তবে $L = \text{constant}$।</div>
-    </div>
-<div style="position: relative; width: 100%; height: 0; padding-top: 125.0000%;
- padding-bottom: 0; box-shadow: 0 2px 8px 0 rgba(63,69,81,0.16); margin-top: 1.6em; margin-bottom: 0.9em; overflow: hidden;
- border-radius: 8px; will-change: transform;">
-  <iframe loading="lazy" style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; border: none; padding: 0;margin: 0;"
-    src="https://www.canva.com/design/DAHChWcD_mc/4KIPbMS2QKbbEM8cp9QLYw/view?embed" allowfullscreen="allowfullscreen" allow="fullscreen">
-  </iframe>
-</div>
-<a href="https:&#x2F;&#x2F;www.canva.com&#x2F;design&#x2F;DAHChWcD_mc&#x2F;4KIPbMS2QKbbEM8cp9QLYw&#x2F;view?utm_content=DAHChWcD_mc&amp;utm_campaign=designshare&amp;utm_medium=embeds&amp;utm_source=link" target="_blank" rel="noopener">Copy of We are here to help each other. We create bonding with love and friendship.</a> by Mahmudul Islam Mahin
     <script>
-        // LaTeX formatting simulation (Standard text for simple formulas)
-        // In a real environment, MathJax would be loaded for perfect rendering.
+        let globalSheetData = [];
+
+        function extractSpreadsheetId(url) {
+            const regex = /\/d\/([a-zA-Z0-9-_]+)/;
+            const match = url.match(regex);
+            return match ? match[1] : null;
+        }
+
+        async function loadSheet() {
+            const urlInput = document.getElementById('sheetUrl').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+            const loadBtn = document.getElementById('loadBtn');
+            const sheetId = extractSpreadsheetId(urlInput);
+
+            if (!sheetId) {
+                errorMsg.classList.remove('hidden');
+                errorMsg.innerText = "দয়া করে সঠিক গুগল শিটের লিংক দিন।";
+                return;
+            }
+
+            errorMsg.classList.add('hidden');
+            loadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> লোড হচ্ছে...';
+            loadBtn.disabled = true;
+
+            // Google Sheets CSV Export URL
+            const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv`;
+
+            Papa.parse(csvUrl, {
+                download: true,
+                header: false,
+                complete: function(results) {
+                    globalSheetData = results.data;
+                    renderTable(globalSheetData);
+                    
+                    document.getElementById('actionButtons').classList.remove('hidden');
+                    document.getElementById('previewContainer').classList.remove('hidden');
+                    document.getElementById('rowCount').innerText = `${globalSheetData.length - 1} Rows Found`;
+                    
+                    loadBtn.innerHTML = '<i class="fa-solid fa-cloud-arrow-down"></i> শিট লোড করুন';
+                    loadBtn.disabled = false;
+                },
+                error: function(err) {
+                    errorMsg.classList.remove('hidden');
+                    errorMsg.innerText = "শিটটি পড়া যাচ্ছে না। নিশ্চিত করুন শিটটির এক্সেস 'Anyone with the link' করা আছে।";
+                    loadBtn.innerHTML = '<i class="fa-solid fa-cloud-arrow-down"></i> শিট লোড করুন';
+                    loadBtn.disabled = false;
+                }
+            });
+        }
+
+        function generateTableHTML(data, isForImage = false) {
+            if (!data || data.length === 0) return "<p>কোনো ডেটা পাওয়া যায়নি।</p>";
+
+            let html = `<table class="w-full text-left border-collapse ${isForImage ? 'text-sm' : 'text-sm md:text-base'}">`;
+            
+            data.forEach((row, rowIndex) => {
+                // Skip completely empty rows
+                if(row.every(cell => !cell)) return;
+
+                html += `<tr class="${rowIndex === 0 ? 'bg-gray-100 text-gray-800 font-bold border-b-2 border-gray-300' : 'border-b border-gray-200 hover:bg-gray-50'}">`;
+                
+                row.forEach(cell => {
+                    const cellTag = rowIndex === 0 ? 'th' : 'td';
+                    html += `<${cellTag} class="p-3 border-r border-gray-200 last:border-r-0">${cell || ''}</${cellTag}>`;
+                });
+                html += "</tr>";
+            });
+            html += "</table>";
+            return html;
+        }
+
+        function renderTable(data) {
+            const container = document.getElementById('printable-area');
+            container.innerHTML = generateTableHTML(data);
+        }
+
+        async function saveAsZip() {
+            if (globalSheetData.length === 0) return;
+
+            const zipBtn = document.getElementById('zipBtn');
+            const originalBtnHtml = zipBtn.innerHTML;
+            zipBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> জিপ তৈরি হচ্ছে...';
+            zipBtn.disabled = true;
+
+            const zip = new JSZip();
+            const rowsPerPage = 30; // 30 rows per image page
+            const hiddenArea = document.getElementById('hidden-render-area');
+            
+            const headerRow = globalSheetData[0];
+            const dataRows = globalSheetData.slice(1);
+            const totalPages = Math.ceil(dataRows.length / rowsPerPage) || 1;
+
+            try {
+                for (let i = 0; i < totalPages; i++) {
+                    const startIdx = i * rowsPerPage;
+                    const pageData = [headerRow, ...dataRows.slice(startIdx, startIdx + rowsPerPage)];
+                    
+                    hiddenArea.innerHTML = `
+                        <div class="bg-white p-6 border-2 border-gray-800 rounded">
+                            <h2 class="text-xl font-bold mb-4 text-center">Sheet Data - Page ${i + 1}</h2>
+                            ${generateTableHTML(pageData, true)}
+                            <div class="text-right text-xs text-gray-500 mt-4">Generated via Smart Sheet Exporter</div>
+                        </div>
+                    `;
+
+                    const canvas = await html2canvas(hiddenArea, {
+                        scale: 2, // High resolution
+                        useCORS: true,
+                        backgroundColor: "#ffffff"
+                    });
+
+                    const imgData = canvas.toDataURL("image/png").split(',')[1];
+                    zip.file(`sheet_page_${i + 1}.png`, imgData, {base64: true});
+                }
+
+                const content = await zip.generateAsync({type: "blob"});
+                saveAs(content, "sheet_images.zip");
+
+            } catch (error) {
+                alert("ছবি তৈরি করতে সমস্যা হয়েছে।");
+                console.error(error);
+            } finally {
+                hiddenArea.innerHTML = "";
+                zipBtn.innerHTML = originalBtnHtml;
+                zipBtn.disabled = false;
+            }
+        }
     </script>
 </body>
 </html>
