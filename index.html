@@ -3,157 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compact Sheet Viewer</title>
+    <title>Sheet Manager Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link href="https://fonts.maateen.me/solaiman-lipi/font.css" rel="stylesheet">
-    
     <style>
-        body { font-family: 'SolaimanLipi', sans-serif; background: #f3f4f6; }
-        
-        /* মোবাইল প্রিভিউ এর জন্য টেবিল ছোট করা */
+        body { font-family: 'SolaimanLipi', sans-serif; background: #f8fafc; }
         .compact-table th, .compact-table td {
-            font-size: 10px !important; /* একদম ছোট ফন্ট */
-            padding: 4px 6px !important;
-            line-height: 1.2;
+            font-size: 11px !important;
+            padding: 6px 4px !important;
+            border: 1px solid #e2e8f0;
         }
-
-        @media (max-width: 640px) {
-            .compact-table { min-width: 100%; }
+        .status-card {
+            background: white;
+            border-left: 4px solid #3b82f6;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
-
-        .glass {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(5px);
-        }
-
-        /* প্রিন্ট ফরম্যাট */
-        @media print {
-            .no-print { display: none !important; }
-            .compact-table { font-size: 12px !important; }
-        }
+        @media print { .no-print { display: none !important; } }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body class="pb-10">
 
-    <div class="glass shadow-md sticky top-0 z-50 no-print mb-4">
-        <div class="max-w-6xl mx-auto p-4">
-            <div class="flex flex-col gap-3">
-                <select id="sheetSelector" class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 focus:ring-blue-500">
-                    <option value="">শিট নির্বাচন করুন</option>
+    <div class="sticky top-0 z-50 bg-white shadow-sm border-b no-print p-4">
+        <div class="max-w-6xl mx-auto">
+            <h1 class="text-xl font-bold text-gray-800 text-center mb-4">ডেটা এনালাইসিস ড্যাশবোর্ড</h1>
+            
+            <div class="grid grid-cols-2 gap-2 mb-4">
+                <select id="schoolFilter" onchange="applyFilters()" class="text-xs border p-2 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500">
+                    <option value="">সকল স্কুল</option>
                 </select>
-                
-                <div class="flex gap-2">
-                    <button onclick="window.print()" class="flex-1 bg-blue-600 text-white text-sm font-bold py-2 rounded-lg shadow">
-                        প্রিন্ট
-                    </button>
-                    <button id="saveImgBtn" onclick="saveHighResImage()" class="flex-1 bg-emerald-600 text-white text-sm font-bold py-2 rounded-lg shadow">
-                        ছবি সেভ করুন
-                    </button>
-                </div>
+                <select id="methodFilter" onchange="applyFilters()" class="text-xs border p-2 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500">
+                    <option value="">সকল মেথড</option>
+                </select>
+            </div>
+
+            <div class="flex gap-2">
+                <button onclick="window.print()" class="flex-1 bg-gray-800 text-white text-xs font-bold py-2.5 rounded-xl">প্রিন্ট করুন</button>
+                <button id="saveImgBtn" onclick="saveHighResImage()" class="flex-1 bg-blue-600 text-white text-xs font-bold py-2.5 rounded-xl">ছবি সেভ করুন</button>
             </div>
         </div>
     </div>
 
-    <div class="max-w-6xl mx-auto px-2">
-        <div id="capture-area" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <div class="max-w-6xl mx-auto px-3 mt-4">
+        
+        <div id="summaryArea" class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-6">
+            <div class="status-card p-3 rounded-xl text-center">
+                <p class="text-[10px] text-gray-500 uppercase font-bold">মোট টাকা</p>
+                <h3 id="totalAll" class="text-lg font-bold text-blue-600">০</h3>
+            </div>
+            <div class="status-card p-3 rounded-xl text-center border-l-green-500">
+                <p class="text-[10px] text-gray-500 uppercase font-bold">ক্যাশ</p>
+                <h3 id="totalCash" class="text-lg font-bold text-green-600">০</h3>
+            </div>
+            <div class="status-card p-3 rounded-xl text-center border-l-pink-500">
+                <p class="text-[10px] text-gray-500 uppercase font-bold">বিকাশ</p>
+                <h3 id="totalBkash" class="text-lg font-bold text-pink-600">০</h3>
+            </div>
+            <div class="status-card p-3 rounded-xl text-center border-l-orange-500">
+                <p class="text-[10px] text-gray-500 uppercase font-bold">নগদ</p>
+                <h3 id="totalNagad" class="text-lg font-bold text-orange-600">০</h3>
+            </div>
+        </div>
+
+        <div id="capture-area" class="bg-white rounded-xl shadow-lg overflow-hidden border">
             <div id="table-container" class="overflow-x-auto">
-                <div class="text-center py-20 text-gray-400 text-sm">
-                    কোনো ডাটা নেই। উপরে থেকে শিট সিলেক্ট করুন।
-                </div>
+                <div class="p-20 text-center text-sm text-gray-400">ডাটা লোড হচ্ছে...</div>
             </div>
         </div>
     </div>
 
     <script>
-        const config = {
-            sheets: [
-                { name: "ইফতার ২০২৬ লিস্ট", id: "1nai-1HlS01yqoU4MvaQ71H6rgznhNe2cIyXeoLVrRFU" }
-            ]
-        };
+        const SHEET_ID = '1nai-1HlS01yqoU4MvaQ71H6rgznhNe2cIyXeoLVrRFU';
+        let rawData = [];
 
-        const selector = document.getElementById('sheetSelector');
-        const container = document.getElementById('table-container');
+        // পেজ লোড হলে ডাটা আনা
+        window.onload = () => fetchSheetData();
 
-        // লোড ড্রপডাউন
-        config.sheets.forEach(s => {
-            let opt = document.createElement('option');
-            opt.value = s.id;
-            opt.textContent = s.name;
-            selector.appendChild(opt);
-        });
-
-        selector.addEventListener('change', (e) => {
-            if (e.target.value) fetchSheet(e.target.value);
-        });
-
-        async function fetchSheet(id) {
-            container.innerHTML = `<div class="p-10 text-center text-xs">লোড হচ্ছে...</div>`;
-            const url = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv`;
-            
+        async function fetchSheetData() {
+            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
             try {
                 const res = await fetch(url);
                 const csv = await res.text();
-                render(csv);
+                processCSV(csv);
             } catch (err) {
-                container.innerHTML = `<div class="p-10 text-red-500 text-xs">ব্যর্থ হয়েছে।</div>`;
+                alert("ডাটা লোড করতে সমস্যা হয়েছে। শিটটি পাবলিক করা আছে কি না চেক করুন।");
             }
         }
 
-        function render(csv) {
-            const rows = csv.split('\n').map(r => r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/"/g, '')));
-            let h = `<table class="compact-table min-w-full divide-y divide-gray-200 border-collapse">
-                        <thead class="bg-gray-100"><tr>`;
+        function processCSV(csv) {
+            const rows = csv.split('\n').map(r => r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/"/g, '').trim()));
+            const headers = rows[0];
+            const data = rows.slice(1).filter(r => r.length > 1);
+
+            // কনভার্ট টু অবজেক্ট অ্যারে
+            rawData = data.map(row => {
+                let obj = {};
+                headers.forEach((h, i) => obj[h] = row[i]);
+                return obj;
+            });
+
+            populateFilters(headers);
+            applyFilters();
+        }
+
+        function populateFilters() {
+            const schools = [...new Set(rawData.map(item => item.School))].filter(Boolean);
+            const methods = [...new Set(rawData.map(item => item.Method))].filter(Boolean);
+
+            const sSelect = document.getElementById('schoolFilter');
+            const mSelect = document.getElementById('methodFilter');
+
+            schools.forEach(s => sSelect.innerHTML += `<option value="${s}">${s}</option>`);
+            methods.forEach(m => mSelect.innerHTML += `<option value="${m}">${m}</option>`);
+        }
+
+        function applyFilters() {
+            const schoolVal = document.getElementById('schoolFilter').value;
+            const methodVal = document.getElementById('methodFilter').value;
+
+            const filtered = rawData.filter(item => {
+                return (schoolVal === "" || item.School === schoolVal) &&
+                       (methodVal === "" || item.Method === methodVal);
+            });
+
+            calculateStats(filtered);
+            renderTable(filtered);
+        }
+
+        function calculateStats(data) {
+            let total = 0, cash = 0, bkash = 0, nagad = 0;
+
+            data.forEach(item => {
+                const amt = parseFloat(item.Amount) || 0;
+                total += amt;
+                const m = (item.Method || "").toLowerCase();
+                if (m.includes("cash") || m.includes("ক্যাশ")) cash += amt;
+                else if (m.includes("bkash") || m.includes("বিকাশ")) bkash += amt;
+                else if (m.includes("nagad") || m.includes("নগদ")) nagad += amt;
+            });
+
+            document.getElementById('totalAll').innerText = total.toLocaleString() + "/-";
+            document.getElementById('totalCash').innerText = cash.toLocaleString() + "/-";
+            document.getElementById('totalBkash').innerText = bkash.toLocaleString() + "/-";
+            document.getElementById('totalNagad').innerText = nagad.toLocaleString() + "/-";
+        }
+
+        function renderTable(data) {
+            if (data.length === 0) {
+                document.getElementById('table-container').innerHTML = `<p class="p-10 text-center">কোনো তথ্য পাওয়া যায়নি</p>`;
+                return;
+            }
+
+            const headers = Object.keys(data[0]);
+            let html = `<table class="compact-table min-w-full">
+                <thead class="bg-gray-800 text-white"><tr>`;
             
-            rows[0].forEach(col => h += `<th class="border border-gray-300 font-bold text-gray-700">${col}</th>`);
-            h += `</tr></thead><tbody class="bg-white">`;
+            headers.forEach(h => html += `<th class="text-left font-bold">${h}</th>`);
+            html += `</tr></thead><tbody>`;
 
-            for (let i = 1; i < rows.length; i++) {
-                if (rows[i].length <= 1) continue;
-                h += `<tr class="border-b">`;
-                rows[i].forEach(cell => h += `<td class="border border-gray-200 text-gray-600">${cell}</td>`);
-                h += `</tr>`;
-            }
-            container.innerHTML = h + `</tbody></table>`;
+            data.forEach(row => {
+                html += `<tr class="hover:bg-gray-50">`;
+                headers.forEach(h => html += `<td>${row[h] || ''}</td>`);
+                html += `</tr>`;
+            });
+
+            document.getElementById('table-container').innerHTML = html + `</tbody></table>`;
         }
 
-        // উচ্চমানের ছবি সেভ করার জন্য উন্নত মেথড
         async function saveHighResImage() {
             const btn = document.getElementById('saveImgBtn');
-            const target = document.getElementById('capture-area');
-            
-            if (selector.value === "") return alert("আগে শিট সিলেক্ট করুন");
-
             btn.innerText = "প্রসেসিং...";
-            btn.disabled = true;
-
+            
+            // ক্যাপচারের সময় সাময়িকভাবে প্যাডিং বাড়িয়ে সুন্দর করা
+            const captureArea = document.getElementById('capture-area');
+            
             try {
-                // High resolution scaling (3x for ultra sharp)
-                const canvas = await html2canvas(target, {
-                    scale: 3, 
+                const canvas = await html2canvas(captureArea, {
+                    scale: 3,
                     useCORS: true,
-                    logging: false,
-                    backgroundColor: "#ffffff",
-                    windowWidth: target.scrollWidth,
-                    windowHeight: target.scrollHeight
+                    backgroundColor: "#ffffff"
                 });
 
-                // Convert to Blob for better performance and quality
                 canvas.toBlob((blob) => {
-                    const url = URL.createObjectURL(blob);
                     const link = document.createElement('a');
-                    link.download = `Table_Export_${Date.now()}.png`;
-                    link.href = url;
+                    link.download = `Report_${Date.now()}.png`;
+                    link.href = URL.createObjectURL(blob);
                     link.click();
-                    URL.revokeObjectURL(url);
                 }, 'image/png', 1.0);
-
             } catch (e) {
-                alert("ছবি তৈরি করা সম্ভব হয়নি।");
+                alert("ছবি সেভ করতে সমস্যা হয়েছে।");
             } finally {
                 btn.innerText = "ছবি সেভ করুন";
-                btn.disabled = false;
             }
         }
     </script>
