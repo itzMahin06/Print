@@ -77,7 +77,12 @@
         const SHEET_ID = '1nai-1HlS01yqoU4MvaQ71H6rgznhNe2cIyXeoLVrRFU';
         let rawData = [];
 
-        // পেজ লোড হলে ডাটা আনা
+        // সংখ্যাকে বাংলায় রূপান্তর করার ফাংশন
+        function toBanglaNumber(n) {
+            const banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            return n.toString().split('').map(digit => banglaDigits[digit] || digit).join('');
+        }
+
         window.onload = () => fetchSheetData();
 
         async function fetchSheetData() {
@@ -87,7 +92,7 @@
                 const csv = await res.text();
                 processCSV(csv);
             } catch (err) {
-                alert("ডাটা লোড করতে সমস্যা হয়েছে। শিটটি পাবলিক করা আছে কি না চেক করুন।");
+                alert("ডাটা লোড করতে সমস্যা হয়েছে। শিটটি পাবলিক করা আছে কি না চেক করুন।");
             }
         }
 
@@ -96,14 +101,13 @@
             const headers = rows[0];
             const data = rows.slice(1).filter(r => r.length > 1);
 
-            // কনভার্ট টু অবজেক্ট অ্যারে
             rawData = data.map(row => {
                 let obj = {};
                 headers.forEach((h, i) => obj[h] = row[i]);
                 return obj;
             });
 
-            populateFilters(headers);
+            populateFilters();
             applyFilters();
         }
 
@@ -143,27 +147,29 @@
                 else if (m.includes("nagad") || m.includes("নগদ")) nagad += amt;
             });
 
-            document.getElementById('totalAll').innerText = total.toLocaleString() + "/-";
-            document.getElementById('totalCash').innerText = cash.toLocaleString() + "/-";
-            document.getElementById('totalBkash').innerText = bkash.toLocaleString() + "/-";
-            document.getElementById('totalNagad').innerText = nagad.toLocaleString() + "/-";
+            document.getElementById('totalAll').innerText = toBanglaNumber(total.toLocaleString()) + "/-";
+            document.getElementById('totalCash').innerText = toBanglaNumber(cash.toLocaleString()) + "/-";
+            document.getElementById('totalBkash').innerText = toBanglaNumber(bkash.toLocaleString()) + "/-";
+            document.getElementById('totalNagad').innerText = toBanglaNumber(nagad.toLocaleString()) + "/-";
         }
 
         function renderTable(data) {
             if (data.length === 0) {
-                document.getElementById('table-container').innerHTML = `<p class="p-10 text-center">কোনো তথ্য পাওয়া যায়নি</p>`;
+                document.getElementById('table-container').innerHTML = `<p class="p-10 text-center">কোনো তথ্য পাওয়া যায়নি</p>`;
                 return;
             }
 
             const headers = Object.keys(data[0]);
             let html = `<table class="compact-table min-w-full">
-                <thead class="bg-gray-800 text-white"><tr>`;
+                <thead class="bg-gray-800 text-white"><tr>
+                <th class="text-left font-bold">ক্র. নং</th>`; // সিরিয়াল হেডার যোগ করা হয়েছে
             
             headers.forEach(h => html += `<th class="text-left font-bold">${h}</th>`);
             html += `</tr></thead><tbody>`;
 
-            data.forEach(row => {
+            data.forEach((row, index) => {
                 html += `<tr class="hover:bg-gray-50">`;
+                html += `<td>${toBanglaNumber(index + 1)}</td>`; // বাংলা সিরিয়াল নম্বর যোগ করা হয়েছে
                 headers.forEach(h => html += `<td>${row[h] || ''}</td>`);
                 html += `</tr>`;
             });
@@ -174,8 +180,6 @@
         async function saveHighResImage() {
             const btn = document.getElementById('saveImgBtn');
             btn.innerText = "প্রসেসিং...";
-            
-            // ক্যাপচারের সময় সাময়িকভাবে প্যাডিং বাড়িয়ে সুন্দর করা
             const captureArea = document.getElementById('capture-area');
             
             try {
@@ -192,7 +196,7 @@
                     link.click();
                 }, 'image/png', 1.0);
             } catch (e) {
-                alert("ছবি সেভ করতে সমস্যা হয়েছে।");
+                alert("ছবি সেভ করতে সমস্যা হয়েছে।");
             } finally {
                 btn.innerText = "ছবি সেভ করুন";
             }
