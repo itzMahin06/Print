@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Routine - Dept. of Mathematics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.cdnfonts.com/css/solaimanlipi" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.maateen.me/solaiman-lipi/font.css" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'SolaimanLipi', 'Baloo Da 2', sans-serif;
+            background-color: #f1f5f9;
+            font-size: 14px; /* টেক্সট সাইজ কিছুটা কমানো হয়েছে যেন এক স্ক্রিনে ধরে */
+        }
+        .routine-card {
+            max-width: 850px;
+        }
+        @media print {
+            @page { size: A4; margin: 1cm; }
+            body { background: white; padding: 0; }
+            .no-print { display: none !important; }
+            .print-area { 
+                box-shadow: none !important; 
+                border: 2px solid #333 !important; 
+                margin: 0 !important;
+                padding: 15px !important;
+                width: 100% !important;
+            }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid #000 !important; padding: 6px !important; color: black !important; }
+            .bg-indigo-600 { background-color: #f3f4f6 !important; color: black !important; }
+        }
+    </style>
+</head>
+<body class="flex justify-center items-start min-h-screen p-2 md:p-6">
+
+    <div class="routine-card w-full bg-white shadow-lg rounded-lg overflow-hidden print-area">
+        
+        <div class="p-4 text-center border-b-2 border-indigo-100">
+            <h1 class="text-2xl font-bold text-indigo-900 leading-tight">গণিত বিভাগ</h1>
+            <p class="text-md text-gray-700">আনন্দ মোহন কলেজ, ময়মনসিংহ</p>
+            <div class="mt-2 bg-indigo-600 text-white inline-block px-4 py-1 rounded text-sm font-semibold uppercase tracking-wide">
+                ২য় ইনকোর্স পরীক্ষার রুটিন
+            </div>
+            <p class="text-xs text-gray-500 mt-1 font-bold">অনার্স ১ম বর্ষ | সেশন: ২০২৪-২০২৫</p>
+        </div>
+
+        <div class="px-4 py-2 flex justify-between items-center bg-gray-50 no-print">
+            <span class="text-xs text-gray-500 italic">* মোবাইল স্ক্রিনে ডানে-বামে স্ক্রল করুন</span>
+            <button onclick="window.print()" class="flex items-center gap-1 bg-gray-800 hover:bg-black text-white px-4 py-1.5 rounded text-sm transition-all shadow">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                Premium Print / PDF
+            </button>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-center border-collapse">
+                <thead>
+                    <tr class="bg-indigo-600 text-white">
+                        <th class="p-2 border border-indigo-500">তারিখ ও বার</th>
+                        <th class="p-2 border border-indigo-500">কোর্স শিরোনাম (কোড)</th>
+                        <th class="p-2 border border-indigo-500">সময়</th>
+                        <th class="p-2 border border-indigo-500">কক্ষ ও রোল</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-800">
+                    <tr class="border-b border-gray-100">
+                        <td class="p-2 border">০৬ এপ্রিল ২০২৬ <br><b>সোমবার</b></td>
+                        <td class="p-2 border">ফান্ডামেন্টাল ম্যাথমেটিকস (২১৩৭০১)</td>
+                        <td class="p-2 border">১:৩০ - ২:০০</td>
+                        <td class="p-2 border">গণিত ১ (১-১০০), গণিত ২ (১০১-২০০)</td>
+                    </tr>
+                    <tr class="bg-gray-50">
+                        <td class="p-2 border">০৭ এপ্রিল ২০২৬ <br><b>মঙ্গলবার</b></td>
+                        <td class="p-2 border">রসায়ন-১ (২১২৮০৭)</td>
+                        <td class="p-2 border">১২:০০ - ১২:৩০</td>
+                        <td class="p-2 border">রসায়ন বিভাগ</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border">০৮ এপ্রিল ২০২৬ <br><b>বুধবার</b></td>
+                        <td class="p-2 border">ইতিহাস (২১৯৯০১)</td>
+                        <td class="p-2 border">১:৩০ - ২:০০</td>
+                        <td class="p-2 border">ইতিহাস বিভাগ</td>
+                    </tr>
+                    <tr class="bg-gray-50">
+                        <td class="p-2 border" rowspan="2">০৯ এপ্রিল ২০২৬ <br><b>বৃহস্পতিবার</b></td>
+                        <td class="p-2 border">পদার্থবিজ্ঞান-১ (২১২৭০৭)</td>
+                        <td class="p-2 border">১১:১৫ - ১১:৪৫</td>
+                        <td class="p-2 border">পদার্থবিজ্ঞান বিভাগ</td>
+                    </tr>
+                    <tr class="bg-gray-50">
+                        <td class="p-2 border">ক্যালকুলাস-১ (২১৩৭০৩)</td>
+                        <td class="p-2 border">১:৩০ - ২:০০</td>
+                        <td class="p-2 border">গণিত ১ (১-১০০), গণিত ২ (১০১-২০০)</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border">১২ এপ্রিল ২০২৬ <br><b>রবিবার</b></td>
+                        <td class="p-2 border">পদার্থবিজ্ঞান-২ (২১২৭০৯)</td>
+                        <td class="p-2 border">১১:১৫ - ১১:৪৫</td>
+                        <td class="p-2 border">পদার্থবিজ্ঞান বিভাগ</td>
+                    </tr>
+                    <tr class="bg-gray-50">
+                        <td class="p-2 border">২০ এপ্রিল ২০২৬ <br><b>সোমবার</b></td>
+                        <td class="p-2 border">লিনিয়ার এলজেবরা (২১৩৭০৫)</td>
+                        <td class="p-2 border">১:৩০ - ২:০০</td>
+                        <td class="p-2 border">গণিত ১ (১-১০০), গণিত ২ (১০১-২০০)</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border">২১ এপ্রিল ২০২৬ <br><b>মঙ্গলবার</b></td>
+                        <td class="p-2 border">আইসিটি (২১৯১০৩)</td>
+                        <td class="p-2 border">১:৩০ - ২:০০</td>
+                        <td class="p-2 border">গণিত ১ (১-১০০), গণিত ২ (১০১-২০০)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="p-3 bg-white text-center border-t border-gray-100">
+            <p class="text-[10px] text-gray-400 uppercase tracking-widest">©Mahin • Department of Mathematics - AMC</p>
+        </div>
+    </div>
+
+</body>
+</html>
