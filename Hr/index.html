@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Honour's 1st Year Half-Year (2024-25) Results</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+<style>
+
+/* ── SCREEN STYLES ─────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  background: #f0ece4;
+  color: #111;
+  min-height: 100vh;
+}
+
+.screen-wrap {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 28px 24px 60px;
+}
+
+/* Print button */
+.print-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+.btn-print {
+  background: #1a3a5c;
+  color: #fff;
+  border: none;
+  padding: 11px 32px;
+  font-family: 'Libre Baskerville', serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.18);
+  transition: background .2s;
+}
+.btn-print:hover { background: #0d2540; }
+.btn-print svg { width: 18px; height: 18px; fill: #fff; flex-shrink:0; }
+
+/* Paper card */
+.paper {
+  background: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 24px rgba(0,0,0,.12);
+  padding: 28px 32px 32px;
+}
+
+/* ── HEADER ───────────────────────────── */
+.hdr {
+  text-align: center;
+  border-top: 3px solid #1a3a5c;
+  border-bottom: 3px solid #1a3a5c;
+  padding: 12px 0 10px;
+  margin-bottom: 18px;
+}
+.hdr .college {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: #1a3a5c;
+}
+.hdr h1 {
+  font-size: 19px;
+  font-weight: 700;
+  margin: 4px 0 2px;
+  color: #0d1a2a;
+}
+.hdr h2 {
+  font-size: 13px;
+  font-weight: 400;
+  font-style: italic;
+  color: #444;
+}
+
+/* ── TABLE ───────────────────────────── */
+.tbl-wrap { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+thead tr { background: #1a3a5c; color: #fff; }
+thead th {
+  padding: 7px 5px;
+  text-align: center;
+  font-size: 10.5px;
+  font-family: 'Libre Baskerville', serif;
+  font-weight: 700;
+  letter-spacing: .02em;
+  border: 1px solid rgba(255,255,255,.2);
+  vertical-align: bottom;
+  line-height: 1.3;
+}
+thead th.th-name { text-align: left; padding-left: 7px; }
+
+tbody tr { border-bottom: 1px solid #ddd; }
+tbody tr:nth-child(even) { background: #f7f5f0; }
+tbody tr:hover { background: #eef3fa; }
+tbody tr.absent td { color: #bbb; }
+
+td {
+  padding: 4px 5px;
+  text-align: center;
+  vertical-align: middle;
+  border-left: 1px solid #e5e5e5;
+  border-right: 1px solid #e5e5e5;
+  font-size: 11.5px;
+}
+td.td-sn   { color: #999; font-size: 10px; }
+td.td-roll { font-family: 'Source Code Pro', monospace; font-size: 10px; color: #555; }
+td.td-regi { font-family: 'Source Code Pro', monospace; font-size: 9.5px; color: #888; }
+td.td-name { text-align: left; font-weight: 700; padding-left: 7px; font-size: 11.5px; white-space: nowrap; }
+td.td-marks { font-family: 'Source Code Pro', monospace; font-size: 11px; }
+td.td-total { font-family: 'Source Code Pro', monospace; font-weight: 700; font-size: 12.5px; }
+td.td-comment { font-weight: 700; white-space: nowrap; }
+
+/* Rank badges */
+.rb {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 2px;
+  font-size: 10.5px;
+  font-weight: 700;
+}
+.rb-1  { background:#fff3cd; color:#7d5a00; border:1px solid #e0b800; }
+.rb-2  { background:#ececec; color:#444;    border:1px solid #aaa; }
+.rb-3  { background:#fde5d5; color:#7a3000; border:1px solid #d47040; }
+.rb-hi { background:#e8f4ef; color:#0d5c38; border:1px solid #50b080; font-size:10px; }
+.rb-md { background:#eaf0fb; color:#1a3a7a; border:1px solid #7aaad0; font-size:10px; }
+.rb-lo { background:#faf0f0; color:#6a2020; border:1px solid #d09090; font-size:10px; }
+.rb-ab { color:#bbb; font-size:10px; font-style:italic; }
+.rb-pt { color:#ccc; font-size:9.5px; font-style:italic; }
+
+/* Signature row */
+.sig-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 36px;
+  padding-top: 14px;
+  border-top: 1px solid #ccc;
+}
+.sig-block { text-align: center; font-size: 11.5px; line-height: 1.8; }
+.sig-line { border-top: 1px solid #333; width: 170px; margin: 32px auto 4px; }
+
+/* Footer */
+.footer {
+  text-align: center;
+  margin-top: 26px;
+  font-size: 11.5px;
+  font-style: italic;
+  color: #1a3a5c;
+  letter-spacing: .05em;
+  border-top: 1px dashed #bbb;
+  padding-top: 10px;
+}
+
+/* ══════════════════════════════════════════════════
+   PRINT STYLES — A4 Landscape, perfect fit
+   A4 landscape = 297mm x 210mm
+   @8mm margins => 281mm x 194mm usable
+══════════════════════════════════════════════════ */
+@media print {
+
+  @page {
+    size: 297mm 210mm;   /* A4 landscape */
+    margin: 8mm 10mm;
+  }
+
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  html { font-size: 7.2pt; }
+
+  body {
+    background: #fff !important;
+    width: 277mm;
+    font-size: 7.2pt;
+  }
+
+  .screen-wrap {
+    padding: 0 !important;
+    max-width: 277mm !important;
+    width: 277mm !important;
+  }
+
+  .print-bar { display: none !important; }
+
+  .paper {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    width: 277mm !important;
+  }
+
+  /* Header print */
+  .hdr {
+    border-top: 2pt solid #1a3a5c !important;
+    border-bottom: 2pt solid #1a3a5c !important;
+    padding: 5pt 0 4pt !important;
+    margin-bottom: 7pt !important;
+  }
+  .hdr .college { font-size: 6.5pt !important; }
+  .hdr h1       { font-size: 12pt !important; margin: 2pt 0 1pt !important; }
+  .hdr h2       { font-size: 8pt !important; }
+
+  /* Table print */
+  table {
+    width: 277mm !important;
+    table-layout: fixed !important;
+    font-size: 7pt !important;
+    border-collapse: collapse !important;
+  }
+
+  /* Fixed column widths — must total 277mm */
+  /* sn=7  roll=24  regi=27  name=52  m1=24  m2=21  m3=26  m4=18  tot=17  com=21 => 237mm  +40 buffer */
+  col.c-sn   { width: 7mm !important; }
+  col.c-roll { width: 24mm !important; }
+  col.c-regi { width: 27mm !important; }
+  col.c-name { width: 57mm !important; }
+  col.c-m1   { width: 26mm !important; }
+  col.c-m2   { width: 22mm !important; }
+  col.c-m3   { width: 27mm !important; }
+  col.c-m4   { width: 19mm !important; }
+  col.c-tot  { width: 18mm !important; }
+  col.c-com  { width: 22mm !important; }
+
+  thead tr {
+    background: #1a3a5c !important;
+    color: #fff !important;
+  }
+  thead th {
+    font-size: 6.5pt !important;
+    padding: 3.5pt 3pt !important;
+    border: 0.5pt solid rgba(255,255,255,.3) !important;
+  }
+
+  tbody tr { border-bottom: 0.4pt solid #ccc !important; }
+  tbody tr:nth-child(even) { background: #f4f4f4 !important; }
+  tbody tr:hover { background: inherit !important; }
+
+  td {
+    padding: 2.5pt 3pt !important;
+    font-size: 7pt !important;
+    border-left: 0.4pt solid #ddd !important;
+    border-right: 0.4pt solid #ddd !important;
+  }
+  td.td-sn    { font-size: 6pt !important; }
+  td.td-roll  { font-size: 6.5pt !important; }
+  td.td-regi  { font-size: 6pt !important; }
+  td.td-name  { font-size: 7pt !important; white-space: normal !important; }
+  td.td-marks { font-size: 7pt !important; }
+  td.td-total { font-size: 7.5pt !important; }
+
+  .rb    { font-size: 6pt !important; padding: 1pt 3pt !important; }
+  .rb-ab { font-size: 6pt !important; }
+  .rb-pt { font-size: 6pt !important; }
+
+  .rb-1  { background:#fff3cd !important; color:#7d5a00 !important; border:0.5pt solid #e0b800 !important; }
+  .rb-2  { background:#ececec !important; color:#444 !important;    border:0.5pt solid #aaa !important; }
+  .rb-3  { background:#fde5d5 !important; color:#7a3000 !important; border:0.5pt solid #d47040 !important; }
+  .rb-hi { background:#e8f4ef !important; color:#0d5c38 !important; border:0.5pt solid #50b080 !important; }
+  .rb-md { background:#eaf0fb !important; color:#1a3a7a !important; border:0.5pt solid #7aaad0 !important; }
+  .rb-lo { background:#faf0f0 !important; color:#6a2020 !important; border:0.5pt solid #d09090 !important; }
+
+  tr { page-break-inside: avoid !important; }
+
+  .sig-row {
+    margin-top: 12pt !important;
+    padding-top: 7pt !important;
+  }
+  .sig-block { font-size: 7.5pt !important; line-height: 1.6 !important; }
+  .sig-line  { width: 110px !important; margin: 16pt auto 3pt !important; }
+
+  .footer {
+    margin-top: 8pt !important;
+    padding-top: 5pt !important;
+    font-size: 7.5pt !important;
+  }
+}
+</style>
+</head>
+<body>
+<div class="screen-wrap">
+
+  <!-- Print button -->
+  <div class="print-bar">
+    <button class="btn-print" onclick="window.print()">
+      <svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+      Print / Save as PDF (A4 Landscape)
+    </button>
+  </div>
+
+  <div class="paper">
+
+    <!-- Header -->
+    <div class="hdr">
+      <div class="college">Department of Mathematics &nbsp;·&nbsp; Ananda Mohan College, Mymensingh</div>
+      <h1>Honour's 1st Year — Half-Year Examination Result Sheet (2024–25)</h1>
+      <h2>1st Year Honours &nbsp;·&nbsp; Mathematics Department &nbsp;·&nbsp; Exam Year: 2025</h2>
+    </div>
+
+    <!-- Table -->
+    <div class="tbl-wrap">
+      <table id="rt">
+        <colgroup>
+          <col class="c-sn">
+          <col class="c-roll">
+          <col class="c-regi">
+          <col class="c-name">
+          <col class="c-m1">
+          <col class="c-m2">
+          <col class="c-m3">
+          <col class="c-m4">
+          <col class="c-tot">
+          <col class="c-com">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Class Roll</th>
+            <th>Reg. No.</th>
+            <th class="th-name">Student Name</th>
+            <th>Fund. of Maths<br>(213701)</th>
+            <th>Calculus-I<br>(213703)</th>
+            <th>Linear Algebra &amp;<br>Analytic Geo.<br>(213705)</th>
+            <th>ICT<br>(219903)</th>
+            <th>Total<br>Marks</th>
+            <th>Merit /<br>Comment</th>
+          </tr>
+        </thead>
+        <tbody id="tb"></tbody>
+      </table>
+    </div>
+
+    <!-- Signatures -->
+    <div class="sig-row">
+      <div class="sig-block">
+        <div class="sig-line"></div>
+        বিভাগীয় প্রধান<br>গণিত বিভাগ<br>আনন্দ মোহন কলেজ, ময়মনসিংহ।
+      </div>
+      <div class="sig-block">
+        <div class="sig-line"></div>
+        কোর্স কোঅর্ডিনেটর<br>১ম বর্ষ অনার্স, গণিত বিভাগ<br>আনন্দ মোহন কলেজ, ময়মনসিংহ।
+      </div>
+    </div>
+
+    <div class="footer">Result redesign by MAHIN (05)</div>
+  </div>
+</div>
+
+<script>
+const DATA = [
+  ["2242537001","24237247168","Md. Mizanur Rahman Mizan",32,8,18,null],
+  ["2242537002","24237247221","Md. Jobayer Al Mahim",29,6,30,27],
+  ["2242537003","24237247042","Shehabul Hasan Rifat",46,31,40,35],
+  ["2242537004",null,"Md. Jubair Ahmed Siam",null,null,null,null],
+  ["2242537005","24237247078","Mahmudul Islam Mahin",35,20,30,22],
+  ["2242537006","24237247228","Rajit Farhan Taj",25,17,8,20],
+  ["2242537007","24237247092","Md. Zisan Ahmed Sunny",31,16,2,22],
+  ["2242537008",null,"Mahmudul Hasan",20,10,null,null],
+  ["2242537009",null,"Md. Ariful Islam",null,null,null,null],
+  ["2242537010","24237247185","Aseer Mansur Nasif",30,8,6,16],
+  ["2242537011","24237247143","Md. Siam Sarkar",20,0,10,16],
+  ["2242537012","24237247074","Md. Nazmul Hasan",22,20,20,37],
+  ["2242537013",null,"Nusrat Jahan Tusita",null,null,null,null],
+  ["2242537014","24237247031","Umma Sumaiya Akter",22,2,16,26],
+  ["2242537015","24237247181","Md. Sayem Hasan",28,6,30,23],
+  ["2242537016","24237247208","Shahriar Sadnan Sami",17,5,16,10],
+  ["2242537017","24237247127","Topu Chandra Debnath",18,26,25,36],
+  ["2242537018",null,"Riyad Hasan",7,0,null,null],
+  ["2242537019","24237247146","Foysal Ahamed Sayam",28,4,2,18],
+  ["2242537020",null,"Md. Akib Hossain Muna",null,null,null,null],
+  ["2242537021","24237247061","Taieba Mahzabin Khan",33,0,5,17],
+  ["2242537022",null,"Tabassum Kibrea",null,null,null,null],
+  ["2242537023","24237247157","Al Airin Ara Ami",32,2,10,35],
+  ["2242537024","24237247189","Muttakin",35,0,28,18],
+  ["2242537025","24237247093","Sumaya Jannat Samia",31,10,0,19],
+  ["2242537026","24237247068","Mominur Akter Moumita",50,18,14,34],
+  ["2242537027",null,"Israt Jahan Eakra",null,null,null,null],
+  ["2242537028","24237247035","Md. Fahmid Foysal Akanda",52,27,30,15],
+  ["2242537029","24237247173","Sadia Akter",47,30,34,34],
+  ["2242537030","24237247047","Saruar Hossain",30,8,28,20],
+  ["2242537031",null,"Mahid Ahmed Sihab",null,null,null,null],
+  ["2242537032","24237247152","Hosnay Mobarok Hira",27,0,0,20],
+  ["2242537033","24237247137","Abu Obida Md Rikja",19,0,26,10],
+  ["2242537034",null,"Rizowana Farden Anan",12,0,2,null],
+  ["2242537035","24237247077","Jannatun Nur Jyoti",33,5,11,44],
+  ["2242537036",null,"Md. Hozayfa Naeem",null,null,null,null],
+  ["2242537037",null,"Mole Rani Day",null,null,null,null],
+  ["2242537038",null,"Afifa Rahman Munira",null,null,null,null],
+  ["2242537039","24237247073","Arifur Rahman Emon",20,10,17,10],
+  ["2242537040","24237247032","Iftakhar Ahmed",22,11,16,9],
+  ["2242537041","24237247113","Mahibi Monowar Hossain Prohor",28,5,20,4],
+  ["2242537042","24237247038","Johirul Islam",20,0,2,17],
+  ["2242537043","24237247052","Sharmin Tamanna",26,21,16,34],
+  ["2242537044","24237247076","Mst. Fatema Akter",20,3,0,25],
+  ["2242537045",null,"Faria Jannat",null,null,null,null],
+  ["2242537046","24237247201","Payel",25,0,8,29],
+  ["2242537047","24237247085","Al-Sayeed",17,0,null,null],
+  ["2242537048","24237247066","Mst. Sabikun Nahar",28,0,24,38],
+  ["2242537049","24237247121","Md. Touhidul Islam Khan",17,7,20,20],
+  ["2242537050","24237247048","Zikkratus Jahan",35,18,16,36],
+  ["2242537051","24237247112","Mst. Jim Akter",28,2,20,27],
+  ["2242537052",null,"Joy Basak",null,null,null,null],
+  ["2242537053","24237247179","Ayesha Siddika Khanam Asha",16,15,28,37],
+  ["2242537054","24237247067","Nahida Akter Tisha",20,3,15,26],
+  ["2242537055","24237247049","Noor Afsana",34,19,20,31],
+  ["2242537056","24237247056","Nusrat Jahan Sonchita",30,1,3,16],
+  ["2242537057","24237247135","Al Asif",17,5,12,26],
+  ["2242537058",null,"Md. Towhidur Rahman",null,null,null,null],
+  ["2242537059","24237247158","Mst. Nurunnahar",26,0,10,29],
+  ["2242537060","24237247114","Fuad Hasan",17,0,9,9],
+  ["2242537061","24237247193","Md. Sajjad Hossain Roni",22,0,16,27],
+  ["2242537062","24237247163","Homaeid As Shams Talukder",30,1,20,26],
+  ["2242537063","24237247104","Md. Mahim Ahmed Suad",30,8,20,17],
+  ["2242537064","24237247213","Anisa Afrin",16,4,20,23],
+  ["2242537065",null,"Fahimuzzaman Fahim",null,null,null,null],
+  ["2242537066","24237247186","Ayesha Siddika Anisha",11,4,20,19],
+  ["2242537067","24237247111","Shimu Akter",22,2,15,15],
+  ["2242537068","24237247199","Sidratul Moontah",19,7,11,20],
+  ["2242537069","24237247117","Md. Muhibbullah",8,2,8,18],
+  ["2242537070","24237247169","Nairita Dey Niti",3,0,2,12],
+  ["2242537071","24237247083","Iaska Jahan Iva",11,4,20,13],
+  ["2242537072",null,"Md. Farhan Farazi",null,null,null,null],
+  ["2242537073","24237247089","Mst. Kohinoor Akter",30,9,28,24],
+  ["2242537074",null,"Md. Tahsan Islam",null,null,null,null],
+  ["2242537075","24237247220","Md. Hridoy",62,35,36,22],
+  ["2242537076",null,"Md. Siam Sakib",null,null,null,null],
+  ["2242537077","24237247156","Tahsin Hasan",18,8,9,18],
+  ["2242537078","24237247055","Md. Mhamudul Hassan",22,8,17,19],
+  ["2242537079","24237247148","Mohona Tabassum Oyshi",5,1,15,15],
+  ["2242537080","24237247174","Farhana Sultana Jesy",22,0,21,20],
+  ["2242537081","24237247094","Nusrat Jahan Asha",20,6,16,21],
+  ["2242537082","24237247144","Tawhida Afrin Dia",16,8,10,27],
+  ["2242537083",null,"Md. Anisur Rahman Shimul",null,null,null,null],
+  ["2242537084","24237247088","Md. Radinur Akram",12,4,18,10],
+  ["2242537085","24237247045","Riajul Jannat Risvi",16,18,11,null],
+  ["2242537086","24237247180","Md. Saif Hasan Labib",16,0,5,32],
+  ["2242537087",null,"Sadia Tasnim Anisha",null,null,null,null],
+  ["2242537088",null,"Md. Jaeid Ebne Sakib",null,null,null,null],
+  ["2242537089","24237247123","Md. Ekhlasur Rahman",30,9,18,32],
+  ["2242537090","24237247150","Mugdha Ukil Subroth",23,7,16,23],
+  ["2242537091","24237247101","Sondo Akter",33,21,17,18],
+  ["2242537092","24237247122","Nafiz Ahammed Shake",28,2,18,18],
+  ["2242537093",null,"Md. Shoriful Islam",35,7,5,null],
+  ["2242537094","24237247100","Md. Shakaout Hossain Nion",32,2,2,26],
+  ["2242537095","24237247105","Mariam Hasan",26,6,17,27],
+  ["2242537096",null,"Md. Abir Hasan",null,null,null,null],
+  ["2242537097","24237247096","Shawon Islam",16,1,10,14],
+  ["2242537098","24237247097","Md. Imran",20,1,11,19],
+  ["2242537099","24237247128","Tanisha Tabassum",34,10,17,27],
+  ["2242537100","24237247165","Md. Saif Khan",23,4,13,22],
+  ["2242537101","24237247053","Md. Tawhidul Islam Tupo",22,2,12,15],
+  ["2242537102",null,"Afria Zaman Lamia",null,null,null,null],
+  ["2242537103","24237247065","Mahmuda Irin",21,9,10,21],
+  ["2242537104","24237247206","Mst. Marofa Nishat Onika",37,11,10,21],
+  ["2242537105","24237247178","Md. Robiul Hasan",45,14,4,33],
+  ["2242537106","24237247039","Shariful Islam",18,17,0,17],
+  ["2242537107","24237247207","Mahbuba Sultana Moushi",20,4,2,30],
+  ["2242537108",null,"Saidi Hasan Rafi",2,null,null,null],
+  ["2242537109",null,"Rabeya Tabassum",null,null,null,null],
+  ["2242537110",null,"S.M. Owashimul Bari Songit",null,null,null,null],
+  ["2242537111",null,"Md. Masrur Rahman Al Timayath",null,null,null,null],
+  ["2242537112",null,"Shazzadul Alam Ovoy",null,null,null,null],
+  ["2242537113",null,"Mufrid Junnat Mim",null,null,null,null],
+  ["2242537115","24237247106","Raisa",16,0,25,21],
+  ["2242537116",null,"Md. Shatil Mahmud Tarek",null,null,null,null],
+  ["2242537117","24237247151","Ruma Rani Barman",55,48,48,37],
+  ["2242537118","24237247184","Partha Sen",18,0,25,23],
+  ["2242537119",null,"Mst. Afsana Rimi",null,null,null,null],
+  ["2242537120","24237247116","Md. Mustakim Hossain",30,4,16,35],
+  ["2242537121","24237247194","Md. Mehedi Hasan",24,4,2,6],
+  ["2242537122","24237247079","S.M. Ahsan Habib Akaram",30,10,35,11],
+  ["2242537123","24237247040","Md. Sarwar Hosen",35,9,20,8],
+  ["2242537124",null,"Mst. Sumiya Akter Sarna",null,null,null,null],
+  ["2242537125","24237247216","Md. Sadikul Islam",45,15,null,null],
+  ["2242537126","24237247051","Md. Imran Hossen",15,5,16,34],
+  ["2242537127","24237247204","Mahbuba Sultana Maria",22,8,16,34],
+  ["2242537128",null,"Sagar Ray",null,null,null,null],
+  ["2242537129",null,"Md. Riyadul Islam",6,0,null,null],
+  ["2242537130",null,"Khandaker Saad",null,null,null,null],
+  ["2242537131",null,"Syed Shofiul Haque",null,null,null,null],
+  ["2242537132","24237247132","Nadira Islam Nodi",55,15,25,35],
+  ["2242537133",null,"Khatune Jannat Alvi",null,null,null,null],
+  ["2242537134","24237247062","Tumpa Das",27,8,30,20],
+  ["2242537135","24237247223","Irin Nahar Eva",35,10,null,null],
+  ["2242537136","24237247198","Anuj Sarker",18,5,27,14],
+  ["2242537137","24237247103","Marufa Akter Shifa",30,9,35,42],
+  ["2242537138","24237247188","Mehedi Hasan Riad",14,4,16,15],
+  ["2242537139","24237247136","Junayer Ahmed Siddik Shuvo",10,8,16,11],
+  ["2242537140",null,"Sm. Soyaib Islam",null,null,null,null],
+  ["2242537141","24237247171","Jonaid Ahmed",18,15,10,4],
+  ["2242537142","24237247130","Md. Nihad Rabbi",17,null,40,49],
+  ["2242537143","24237247149","Md. Abdullah All Hassan Ribon",40,4,23,35],
+  ["2242537144",null,"Farhan Fuath Mithun",null,null,null,null],
+  ["2242537145","24237247090","Rafia Sultana",28,0,13,13],
+  ["2242537146","24237247081","Mahejabin Khandaker",22,2,22,33],
+  ["2242537147","24237247144","Md. Farshid Farabi",35,0,null,null],
+  ["2242537148",null,"Ashesh Talukder",null,null,null,null],
+  ["2242537149",null,"Tasnim Md Al-Abir",null,null,null,null],
+  ["2242537150",null,"Zannatul Arzina Akter Basma",null,null,null,null],
+  ["2242537151","24237247082","Md. Hasibul Islam",20,11,20,41],
+  ["2242537152","24237247222","Sourov Chandra Borman",13,1,12,4],
+  ["2242537153",null,"Hasan Mahmud Nahid",null,null,null,null],
+  ["2242537154",null,"Abu Bakar Siddik",null,null,null,null],
+  ["2242537156",null,"Safren Akter Eva",null,null,null,null],
+  ["2242537157",null,"Riyeluzzaman Himel",null,null,null,null],
+  ["2242537158","24237247033","Md. Mustakim",40,3,0,29],
+  ["2242537159","24237247069","Nabojyoti Talukder Joy",25,10,20,32],
+  ["2242537160",null,"Mst. Naima Jafrin Keya",null,null,null,null],
+  ["2242537161","24237247110","Tanjina Akter",22,9,21,22],
+  ["2242537162","24237247129","S.M. Zayeduzzaman Junaid",30,8,21,22],
+  ["2242537163","24237247139","Sabbir Ahammed",18,0,0,12],
+  ["2242537164","24237247057","Umar Bin Aziz",10,3,8,8],
+  ["2242537165","24237247120","Afroza Akther Eva",16,0,21,null],
+  ["2242537166","24237247197","Najati Nur Mithila",22,0,5,26],
+  ["2242537167","24237247030","Sanjin Hossain Nijum",25,13,16,21],
+  ["2242537168","24237247050","Puja Paul",22,12,15,22],
+  ["2242537169","24237247126","Sanzida Sharmin",25,2,6,4],
+  ["2242537170","24237247170","Abdullah Al Noman",22,0,19,13],
+  ["2242537171","24237247046","Esrat Jahan Oishy",20,1,11,11],
+  ["2242537172","24237247161","Nazmus Sakib Sabbir",25,6,10,13],
+  ["2242537173",null,"Rafia Akter",null,null,null,null],
+  ["2242537174","24237247040","Mahadi Hasan Munna",25,0,0,1],
+  ["2242537175",null,"Mahfuzur Rahman",5,null,null,null],
+  ["2242537176",null,"Saima Sultana Rifa",null,null,null,null],
+  ["2242537177","24237247115","Md. Sarifuzzaman Khan",32,6,10,9],
+  ["2242537178","24237247215","Al Fahian Jahiun",20,0,10,0],
+  ["2242537179","24237247141","Jahidul Hasan Mahin",35,2,2,11],
+  ["2242537180","24237247226","Jannatul Nasha Lam",20,14,4,18],
+  ["2242537181","24237247102","Shihab Hasan Mobin",21,11,12,17],
+  ["2242537182","24237247091","Md. Istiak Jaman Khan",28,0,10,2],
+  ["2242537184","24237247087","Md. Mamun-Or-Rashid",24,2,25,18],
+  ["2242537185","24237247099","Mst. Anima",18,0,0,13],
+  ["2242537186","24237247059","Mumtahina Mumu",20,0,0,3],
+  ["2242537187","24237247183","Din Islam Mosfi",30,7,20,19],
+  ["2242537188","24237247175","Md. Shojib Ahmad Joy",28,3,10,13],
+  ["2242537189","24237247084","Jiad Hossen Talukdar",32,5,20,12],
+  ["2242537190",null,"Md. Ujjal Mia",25,0,null,null],
+  ["2242537191","24237247041","Md. Minhaz Mia",36,6,10,12],
+  ["2242537192","24237247167","Faysal Mahmod (Porosh)",26,2,10,3],
+  ["2242537193","24237247131","Joanto Biswas",18,4,2,15],
+  ["2242537194",null,"Mst. Ritika Akondho",null,null,null,null],
+  ["2242537195",null,"Md. Saikat Ali",null,null,null,null],
+  ["2242537196",null,"Md. Al-Amin Islam",null,null,null,null],
+  ["2242537197",null,"Ariful Islam Arif",null,null,null,null],
+  ["2242537198","24237247107","Antor Debnath",16,0,0,1],
+  ["2242537199",null,"Mst. Fatema Akter",null,null,null,null],
+  ["2242537200","24237247160","Md. Asik Mahamud",35,6,25,13],
+  ["2242537201","24237247214","Monirul Hasan",10,null,14,null],
+  ["i-116","23237266964","(i-116) Student",25,10,3,19],
+];
+
+function total(r){
+  const ms=[r[3],r[4],r[5],r[6]];
+  if(ms.every(m=>m===null)) return null;
+  return ms.reduce((a,b)=>a+(b??0),0);
+}
+function fullEligible(r){
+  return r[1]!==null && r[3]!==null && r[4]!==null && r[5]!==null && r[6]!==null;
+}
+
+const eligible=DATA.filter(fullEligible).map(r=>({r,t:total(r)})).sort((a,b)=>b.t-a.t);
+const rankMap=new Map();
+let cr=1;
+eligible.forEach((e,i)=>{
+  if(i>0&&e.t===eligible[i-1].t){ rankMap.set(e.r[0],rankMap.get(eligible[i-1].r[0])); }
+  else{ rankMap.set(e.r[0],cr); }
+  cr++;
+});
+
+function ord(n){ const s=["th","st","nd","rd"],v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
+
+function badge(roll){
+  const rank=rankMap.get(roll);
+  if(rank===undefined) return '<span class="rb-pt">Partial</span>';
+  const cls=rank===1?'rb rb-1':rank===2?'rb rb-2':rank===3?'rb rb-3':rank<=10?'rb rb-hi':rank<=30?'rb rb-md':'rb rb-lo';
+  return `<span class="${cls}">${ord(rank)}</span>`;
+}
+function d(v){ return v===null?'<span style="color:#ccc">—</span>':v; }
+
+const tb=document.getElementById('tb');
+let sn=0;
+DATA.forEach(r=>{
+  const [roll,regi,name,m1,m2,m3,m4]=r;
+  const absent=(m1===null&&m2===null&&m3===null&&m4===null);
+  const tot=total(r);
+  sn++;
+  const comment=absent?'<span class="rb-ab">Absent</span>':badge(roll);
+  const totCell=tot===null?'<span style="color:#ccc">—</span>':`<strong>${tot}</strong>`;
+  const tr=document.createElement('tr');
+  if(absent) tr.classList.add('absent');
+  tr.innerHTML=`
+    <td class="td-sn">${sn}</td>
+    <td class="td-roll">${roll}</td>
+    <td class="td-regi">${regi||'<span style="color:#ccc">—</span>'}</td>
+    <td class="td-name">${name}</td>
+    <td class="td-marks">${d(m1)}</td>
+    <td class="td-marks">${d(m2)}</td>
+    <td class="td-marks">${d(m3)}</td>
+    <td class="td-marks">${d(m4)}</td>
+    <td class="td-total">${totCell}</td>
+    <td class="td-comment">${comment}</td>
+  `;
+  tb.appendChild(tr);
+});
+</script>
+</body>
+</html>
